@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+    namespace 名称空间
+    id 唯一标识
+    resultType 返回值类型
+    #{id} 从传递来的参数中取出id值
+-->
+<mapper namespace="dao.EmployeeMapper">
+    <select id="getEmpById" resultType="bean.Employee">
+        select * from emp where id = #{id}
+    </select>
+    <!-- 当实体类的成员属性与数据表字段名不一致是，就会返回null，解决方法时在sql中为不同名的列名起别名-->
+    <select id="selectEmpList02" resultType="bean.Employee">
+        select * from emp where id = #{id}
+    </select>
+</mapper>
