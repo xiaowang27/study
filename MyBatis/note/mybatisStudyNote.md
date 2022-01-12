@@ -275,3 +275,104 @@ password: 123456
 >Employee{id=1, empName='jack', gender='0', email='jack@123.com'}
 
 &emsp;因为在实体类Employee中时empName，而在数据表emp中则是emp_name
+
+## 1.3 typeHandlers标签
+&emsp;类型处理器标签。Java数据类型和数据库类型映射的桥梁。
+
+
+## 1.4 plugins标签
+&emsp;插件标签。
+
+## 1.5 environments标签
+&emsp;环境标签。
+```xml
+    <!--
+        mybatis可以配置多种环境，default指定使用某种黄金，可以达到快速切换环境
+        environment：配置一个具体的环境信息，必须有两个标签，id表示当前环境的唯一标识
+            transactionManager：事务管理器
+                type：事物管理器的类型。有两种类型：JDBC|MANAGED
+                      自定义事物管理器：实现TransactionFactory接口，type指定为全类名
+            dataSource：数据源类型。UNPOOLED|POOLED|JNDI
+                        自定义数据源：实现DataSourceFactory接口，type指定全类名
+     -->
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="${driver}"/>
+                <property name="url" value="${url}"/>
+                <property name="username" value="${username}"/>
+                <property name="password" value="${password}"/>
+            </dataSource>
+        </environment>
+    </environments>
+```
+
+## 1.6 databaseIdProvider标签
+&emsp;mybatis可以支持不同数据库厂商，执行不同的sql语句。
+&emsp;在mybatis的配置文件中配置
+``` xml
+    <!--
+        databaseIdProvider支持多数据库厂商
+        type = "DB_VENDOR": VenderDatabaseIdProvider
+            作用就是得到数据库厂商的标识(驱动自带的，getDatabaseProductName()得到)
+            mybatis就能工具数据库厂商标识来执行不同的sql
+            MySQL、Oracle、SQL Server
+    -->
+    <databaseIdProvider type="DB_VENDOR">
+        <!-- 为不同的数据库厂商起别名 -->
+        <property name="MySQL" value="mysql"/>
+        <property name="Oracle" value="oracle"/>
+    </databaseIdProvider>
+```
+
+&emsp;在mapper文件中，告诉sql标签
+``` xml
+    <select id="selectEmpList02" resultType="bean.Employee" 
+    databaseId="mysql">
+        select * from emp where id = #{id}
+    </select>
+```
+
+## 1.7 mapper标签
+&emsp;sql映射标签。将sql映射注册到全局中。
+``` xml
+    <!-- 将写好的sql映射文件注册到全局配置文件中 -->
+    <mappers>
+        <!--
+            mapper：注册一个sql映射
+                resource：引用类路径下的sql映射文件
+                url：引用网络路径下或磁盘路径下的sql映射文件
+                class：直接引用接口。如果要注册接口,sql映射文件必须和接口同名且二者放在同一目录下。
+                      一般引用接口，都是利用注解将sql写在接口上，没有映射文件。
+         -->
+        <mapper resource="mapper/EmployeeMapper.xml"/>
+        <mapper class="dao.EmpMapper"/>
+        <!-- 批量注册
+            name：包名
+            mapper文件必须和接口同名且放在同一包下，可以在resource下建立一个文件夹，和接口包同名，将mapper文件放入其中
+            这是一种视觉上让工程更加有条理的方法，实际上还是在一个包内。
+        -->
+        <package name=""/>
+    </mappers>
+```
+
+&emsp;接口写法：
+``` java
+public interface EmpMapper {
+    @Select("select * from emp")
+    public List<Employee> queryEmpList();
+}
+```
+
+# 2. mybatis映射文件
+&emsp;映射文件指导着mybatis如何进行数据库增删改查。
+* cache 命名空间的二级缓存设置
+* cache-ref 其他密码空间缓存配置的引用
+* resultMap 自定义结果集映射
+* parameterMap已废弃 老式风格的参数映射
+* sql 抽取刻重用语句块
+* insert 映射插入语句
+* update 映射更新语句
+* delete 映射删除语句
+* select 映射查询语句
