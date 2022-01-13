@@ -347,7 +347,7 @@ password: 123456
                       一般引用接口，都是利用注解将sql写在接口上，没有映射文件。
          -->
         <mapper resource="mapper/EmployeeMapper.xml"/>
-        <mapper class="dao.EmpMapper"/>
+        <mapper class="dao.AutoEmpSQL"/>
         <!-- 批量注册
             name：包名
             mapper文件必须和接口同名且放在同一包下，可以在resource下建立一个文件夹，和接口包同名，将mapper文件放入其中
@@ -465,3 +465,73 @@ public interface EmpMapper {
         }
     }
 ```
+&emsp;**<font color=#54ff9f>1. 语句提交</font>。当openSession()方法参数是true时，自动提交** 
+``` java
+SqlSession sqlSession = sqlSessionFactory.openSession(true);
+```
+&emsp;**<font color=#54ff9f>2. insert获取自增主键。</font>** mysql支持自增主键，在jdbc中获取自增主键是使用statement.getGenreatedKesy()。
+在mybatis也是利用的这个方法。使用步骤是
+* 在&lt;insert&gt;标签中属性设置为
+<font color=#ff7700>useGeneratedKeys=true</font>，使用自增主键获取主键值策略
+* <font color=#ff7700>keyProperty=</font>指定对应的主键属性(就是对应的实体类的属性)
+``` xml
+<!-- mapper文件设置 -->
+    <!-- 增加员工方法 -->
+    <insert id="addEmp" parameterType="bean.Employee" useGeneratedKeys="true" keyProperty="id">
+        insert into emp (id, emp_name, gender, email)
+        values (#{id}, #{empName}, #{gender}, #{email})
+    </insert>
+```
+
+
+## 2.2 参数处理
+### 2.2.1 单个参数
+
+单个参数mybatis不会做特殊处理，形式：#{参数名}。参数名写什么都可以。
+``` xml
+    <select id="getEmpById" resultType="bean.Employee">
+        select *
+        from emp
+        where id = #{id}
+    </select>
+```
+
+### 2.2.2 多个参数
+多个参数mybatis会做特殊处理，多个参数会被封转成一个map，#{}就是从map中获取指定的key值。以下面为例
+``` xml
+    <!-- mybatis多个参数处理 -->
+    <select id="mybatisParas" resultType="bean.Employee">
+        select * from emp where id=#{id} and emp_name=#{empName}
+    </select>
+```
+
+``` java
+    // mybatis参数处理之多个参数
+    @Test
+    public void mybatisParas() throws IOException {
+        SqlSession sqlSession = getSqlSessionFactory().openSession();
+        EmployeeMapper mapper = sqlSession.getMapper(EmployeeMapper.class);
+        Employee jack = mapper.mybatisParas(1, "jack");
+        System.out.println(jack);
+    }
+    
+    /*
+      报错：
+      Cause: org.apache.ibatis.binding.BindingException: Parameter 'id' not found. Available parameters are [arg1, arg0, param1, param2]
+    */
+```
+&emsp;map是[param1:value1,param2:value2...]，所以多个参数取值的话可以使用#{param1}...或[索引]。
+更改xml文件的取值如下，就不会报错了
+``` xml
+    <!-- mybatis多个参数处理 -->
+    <select id="mybatisParas" resultType="bean.Employee">
+        select * from emp where id=#{param1} and emp_name=#{param2}
+    </select>
+```
+
+&emsp;采用param1、param2...这种方法不够直观看出参数，所以可以使用<font color=#ff700>命名参数</font>的方法，使用方法如下：
+``` java
+// dao接口的方法
+public Employee mybatisParas(@Param("id") int id, @Param("empName") String empName);
+```
+&emsp;命名参数：明确指定封装参数时map的key，使用注解@Param("参数名""),多个参数会被封装成一个map

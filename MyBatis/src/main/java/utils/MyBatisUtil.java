@@ -1,7 +1,7 @@
 package utils;
 
 import bean.Employee;
-import dao.EmpMapper;
+import dao.AutoEmpSQL;
 import dao.EmployeeMapper;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
@@ -58,8 +58,8 @@ public class MyBatisUtil {
 
         // 使用mapper标签的class属性绑定接口，利用注解将sql写在方法上
         System.out.println("注解写sql");
-        EmpMapper empMapper = sqlSession.getMapper(EmpMapper.class);
-        List<Employee> employees = empMapper.queryEmpList();
+        AutoEmpSQL autoEmpSQL = sqlSession.getMapper(AutoEmpSQL.class);
+        List<Employee> employees = autoEmpSQL.queryEmpList();
         for (Employee e : employees) {
             System.out.println(e);
         }
@@ -130,5 +130,14 @@ public class MyBatisUtil {
         for(Employee e : empList){
             System.out.println(e);
         }
+    }
+
+    // mybatis参数处理之多个参数
+    @Test
+    public void mybatisParas() throws IOException {
+        SqlSession sqlSession = getSqlSessionFactory().openSession();
+        EmployeeMapper mapper = sqlSession.getMapper(EmployeeMapper.class);
+        Employee jack = mapper.mybatisParas(1, "jack");
+        System.out.println(jack);
     }
 }

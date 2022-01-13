@@ -5,7 +5,7 @@ import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
-public interface EmpMapper {
+public interface AutoEmpSQL {
     @Select("select * from emp")
     public List<Employee> queryEmpList();
 }

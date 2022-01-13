@@ -27,7 +27,7 @@
     </select>
 
     <!-- 增加员工方法 -->
-    <insert id="addEmp" parameterType="bean.Employee">
+    <insert id="addEmp" parameterType="bean.Employee" useGeneratedKeys="true" keyProperty="id">
         insert into emp (id, emp_name, gender, email)
         values (#{id}, #{empName}, #{gender}, #{email})
     </insert>
@@ -47,5 +47,10 @@
     <!-- 获取员工列表 -->
     <select id="getEmpList" resultType="bean.Employee">
         select * from emp
+    </select>
+
+    <!-- mybatis多个参数处理 -->
+    <select id="mybatisParas" resultType="bean.Employee">
+        select * from emp where id=#{param1} and emp_name=#{param2}
     </select>
 </mapper>

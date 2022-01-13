@@ -1,6 +1,7 @@
 package dao;
 
 import bean.Employee;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -19,4 +20,7 @@ public interface EmployeeMapper {
 
     // 员工列表
     public List<Employee> getEmpList();
+
+    // mybatis多个参数处理
+    public Employee mybatisParas(@Param("id") int id, @Param("empName") String empName);
 }

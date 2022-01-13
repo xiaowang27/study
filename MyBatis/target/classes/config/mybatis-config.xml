@@ -53,7 +53,7 @@
                       一般引用接口，都是利用注解将sql写在接口上，没有映射文件。
          -->
         <mapper resource="mapper/EmployeeMapper.xml"/>
-        <mapper class="dao.EmpMapper"/>
+        <mapper class="dao.AutoEmpSQL"/>
         <!-- 批量注册
             name：包名
             mapper文件必须和接口同名且放在同一包下，可以在resource下建立一个文件夹，和接口包同名，将mapper文件放入其中
