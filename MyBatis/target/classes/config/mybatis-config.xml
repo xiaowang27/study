@@ -6,8 +6,18 @@
     <properties resource="config/dbconfig.yml"></properties>
     <settings>
         <!-- 开启自动驼峰命名规则 -->
-        <setting name="mapUnderscoreToCamelCase" value="false"/>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
     </settings>
+
+    <!--
+        mybatis可以配置多种环境，default指定使用某种黄金，可以达到快速切换环境
+        environment：配置一个具体的环境信息，必须有两个标签，id表示当前环境的唯一标识
+            transactionManager：事务管理器
+                type：事物管理器的类型。有两种类型：JDBC|MANAGED
+                      自定义事物管理器：实现TransactionFactory接口，type指定为全类名
+            dataSource：数据源类型。UNPOOLED|POOLED|JNDI
+                        自定义数据源：实现DataSourceFactory接口，type指定全类名
+     -->
     <environments default="development">
         <environment id="development">
             <transactionManager type="JDBC"/>
@@ -20,9 +30,36 @@
         </environment>
     </environments>
 
+    <!--
+        databaseIdProvider支持多数据库厂商
+        type = "DB_VENDOR": VenderDatabaseIdProvider
+            作用就是得到数据库厂商的标识(驱动自带的，getDatabaseProductName()得到)
+            mybatis就能工具数据库厂商标识来执行不同的sql
+            MySQL、Oracle、SQL Server
+    -->
+    <databaseIdProvider type="DB_VENDOR">
+        <!-- 为不同的数据库厂商起别名 -->
+        <property name="MySQL" value="mysql"/>
+        <property name="Oracle" value="oracle"/>
+    </databaseIdProvider>
+
     <!-- 将写好的sql映射文件注册到全局配置文件中 -->
     <mappers>
+        <!--
+            mapper：注册一个sql映射
+                resource：引用类路径下的sql映射文件
+                url：引用网络路径下或磁盘路径下的sql映射文件
+                class：直接引用接口。如果要注册接口,sql映射文件必须和接口同名且二者放在同一目录下。
+                      一般引用接口，都是利用注解将sql写在接口上，没有映射文件。
+         -->
         <mapper resource="mapper/EmployeeMapper.xml"/>
+        <mapper class="dao.EmpMapper"/>
+        <!-- 批量注册
+            name：包名
+            mapper文件必须和接口同名且放在同一包下，可以在resource下建立一个文件夹，和接口包同名，将mapper文件放入其中
+            这是一种视觉上让工程更加有条理的方法，实际上还是在一个包内。
+        -->
+        <package name=""/>
     </mappers>
 
 </configuration>

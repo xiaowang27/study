@@ -9,13 +9,13 @@ public interface EmployeeMapper {
     public Employee getEmpById(Integer id);
 
     // 增加员工方法
-    public void addEmp(Employee employee);
+    public Integer addEmp(Employee employee);
 
     // 更新员工信息方法
-    public void updateEmp(Employee employee);
+    public Integer updateEmp(Employee employee);
 
     // 删除员工方法
-    public void deleteEmp(Employee employee);
+    public Boolean deleteEmp(Employee employee);
 
     // 员工列表
     public List<Employee> getEmpList();

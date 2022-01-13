@@ -376,3 +376,92 @@ public interface EmpMapper {
 * update 映射更新语句
 * delete 映射删除语句
 * select 映射查询语句
+
+## 2.1 增删改语句
+**mapper文件**
+``` xml
+ <!-- 增加员工方法 -->
+    <insert id="addEmp" parameterType="bean.Employee">
+        insert into emp (id, emp_name, gender, email)
+        values (#{id}, #{empName}, #{gender}, #{email})
+    </insert>
+
+    <!-- 更新员工方法 -->
+    <update id="updateEmp">
+        update emp
+        set id=#{id},emp_name=#{empName},gender=#{gender},email=#{email}
+        where id=#{id}
+    </update>
+
+    <!-- 删除员工方法 -->
+    <delete id="deleteEmp">
+        delete from emp where id=#{id}
+    </delete>
+```
+**dao接口**
+``` java
+    // 增加员工方法
+    public Integer addEmp(Employee employee);
+
+    // 更新员工信息方法
+    public Integer updateEmp(Employee employee);
+
+    // 删除员工方法
+    public Boolean deleteEmp(Employee employee);
+
+```
+
+**测试方法**
+``` java
+   @Test
+    public void crudTest() throws IOException {
+        // 1. 获取SqlSessionFactory对象
+        SqlSessionFactory sqlSessionFactory = getSqlSessionFactory();
+
+        // 2. 获取SqlSession对象    无参方法不会自动提交数据
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+
+        // 3. 获取接口实现类对象
+        EmployeeMapper mapper = sqlSession.getMapper(EmployeeMapper.class);
+
+        // 前提准备，创建一个emp对象
+        Employee employee = new Employee();
+        employee.setId(220113);
+        employee.setEmpName("张三");
+        employee.setGender("男");
+        employee.setEmail("zhangsan@123.com");
+
+        // 4. 执行crud
+        // addEmp(mapper, employee);
+        // employee.setGender("女");
+        // updateEmp(mapper,employee);
+        // deleteEmp(mapper,employee);
+        getEmpList(mapper,employee);
+
+        // 提交
+        sqlSession.commit();
+    }
+    
+    // 添加员工
+    public void addEmp(EmployeeMapper employeeMapper, Employee employee) {
+        System.out.println("添加员工");
+        employeeMapper.addEmp(employee);
+    }
+
+    // 删除员工
+    public void deleteEmp(EmployeeMapper employeeMapper, Employee employee) {
+        System.out.println("删除员工");
+        employeeMapper.deleteEmp(employee);
+    }
+
+    // 修改信息
+    public void updateEmp(EmployeeMapper employeeMapper, Employee employee) {
+        System.out.println("修改信息");
+        Integer integer = employeeMapper.updateEmp(employee);
+        if(integer==1){
+            System.out.println("修改成功");
+        }else{
+            System.out.println("修改失败");
+        }
+    }
+```
