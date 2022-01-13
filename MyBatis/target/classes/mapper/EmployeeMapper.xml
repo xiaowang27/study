@@ -9,43 +9,11 @@
     #{id} 从传递来的参数中取出id值
 -->
 <mapper namespace="dao.EmployeeMapper">
-    <select id="selectEmpList" resultType="bean.Employee">
-        select id, emp_name empName, gender, email
-        from emp
-        where id = #{id}
-    </select>
     <select id="getEmpById" resultType="bean.Employee">
-        select *
-        from emp
-        where id = #{id}
+        select * from emp where id = #{id}
     </select>
     <!-- 当实体类的成员属性与数据表字段名不一致是，就会返回null，解决方法时在sql中为不同名的列名起别名-->
     <select id="selectEmpList02" resultType="bean.Employee">
-        select *
-        from emp
-        where id = #{id}
-    </select>
-
-    <!-- 增加员工方法 -->
-    <insert id="addEmp" parameterType="bean.Employee">
-        insert into emp (id, emp_name, gender, email)
-        values (#{id}, #{empName}, #{gender}, #{email})
-    </insert>
-
-    <!-- 更新员工方法 -->
-    <update id="updateEmp">
-        update emp
-        set id=#{id},emp_name=#{empName},gender=#{gender},email=#{email}
-        where id=#{id}
-    </update>
-
-    <!-- 删除员工方法 -->
-    <delete id="deleteEmp">
-        delete from emp where id=#{id}
-    </delete>
-
-    <!-- 获取员工列表 -->
-    <select id="getEmpList" resultType="bean.Employee">
-        select * from emp
+        select * from emp where id = #{id}
     </select>
 </mapper>
