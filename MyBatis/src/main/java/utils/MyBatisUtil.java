@@ -11,7 +11,9 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MyBatisUtil {
 
@@ -132,12 +134,39 @@ public class MyBatisUtil {
         }
     }
 
-    // mybatis参数处理之多个参数
+    // mybatis参数处理之多个参数  key获取
     @Test
     public void mybatisParas() throws IOException {
         SqlSession sqlSession = getSqlSessionFactory().openSession();
         EmployeeMapper mapper = sqlSession.getMapper(EmployeeMapper.class);
         Employee jack = mapper.mybatisParas(1, "jack");
         System.out.println(jack);
+    }
+
+    // 多参数处理之POJO
+    @Test
+    public void getEmpByPOJO() throws IOException {
+        SqlSession sqlSession = getSqlSessionFactory().openSession();
+        EmployeeMapper mapper = sqlSession.getMapper(EmployeeMapper.class);
+        Employee  emp = new Employee();
+        emp.setId(220112);
+        emp.setEmpName("张三");
+        Employee empByPOJO = mapper.getEmpByPOJO(emp);
+        System.out.println(empByPOJO);
+        sqlSession.close();
+    }
+
+    // 多参数处理之Map
+    @Test
+    public void getEmpByMap() throws IOException {
+        SqlSession sqlSession = getSqlSessionFactory().openSession();
+        EmployeeMapper mapper = sqlSession.getMapper(EmployeeMapper.class);
+        Employee  emp = new Employee();
+        Map<String,Object> map = new HashMap<>();
+        map.put("empName","张三");
+        map.put("id",220112);
+        Employee empByMap = mapper.getEmpByMap(map);
+        System.out.println(empByMap);
+        sqlSession.close();
     }
 }

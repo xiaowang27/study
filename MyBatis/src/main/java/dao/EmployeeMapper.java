@@ -4,6 +4,7 @@ import bean.Employee;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 public interface EmployeeMapper {
     // 查询员工方法
@@ -23,4 +24,10 @@ public interface EmployeeMapper {
 
     // mybatis多个参数处理
     public Employee mybatisParas(@Param("id") int id, @Param("empName") String empName);
+
+    // 多参数处理之POJO
+    Employee getEmpByPOJO(Employee employee);
+
+    // 多参数处理之Map
+    Employee getEmpByMap(Map<String,Object> map);
 }

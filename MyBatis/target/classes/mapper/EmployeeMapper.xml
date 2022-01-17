@@ -9,11 +9,8 @@
     #{id} 从传递来的参数中取出id值
 -->
 <mapper namespace="dao.EmployeeMapper">
-    <select id="selectEmpList" resultType="bean.Employee">
-        select id, emp_name empName, gender, email
-        from emp
-        where id = #{id}
-    </select>
+
+    <!-- 查找单个员工 -->
     <select id="getEmpById" resultType="bean.Employee">
         select *
         from emp
@@ -52,5 +49,15 @@
     <!-- mybatis多个参数处理 -->
     <select id="mybatisParas" resultType="bean.Employee">
         select * from emp where id=#{param1} and emp_name=#{param2}
+    </select>
+
+    <!-- 多参数之POJO -->
+    <select id="getEmpByPOJO" resultType="bean.Employee">
+        select * from emp where id=#{id} and emp_name=#{empName}
+    </select>
+
+    <!-- 多参数 map -->
+    <select id="getEmpByMap" resultType="bean.Employee">
+        select * from emp where id=#{id} and emp_name=#{empName}
     </select>
 </mapper>

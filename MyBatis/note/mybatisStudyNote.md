@@ -65,22 +65,22 @@ public class Employee {
         PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
-    <environments default="development">
-        <environment id="development">
-            <transactionManager type="JDBC"/>
-            <dataSource type="POOLED">
-                <property name="driver" value="com.mysql.jdbc.Driver"/>
-                <property name="url" value="jdbc:mysql://localhost:3306/mybatis_study"/>
-                <property name="username" value="root"/>
-                <property name="password" value="123456"/>
-            </dataSource>
-        </environment>
-    </environments>
+   <environments default="development">
+      <environment id="development">
+         <transactionManager type="JDBC"/>
+         <dataSource type="POOLED">
+            <property name="driver" value="com.mysql.jdbc.Driver"/>
+            <property name="url" value="jdbc:mysql://localhost:3306/mybatis_study"/>
+            <property name="username" value="root"/>
+            <property name="password" value="123456"/>
+         </dataSource>
+      </environment>
+   </environments>
 
-    <!-- 将写好的sql映射文件注册到全局配置文件中 -->
-    <mappers>
-        <mapper resource="mapper/EmployeeMapper.xml"/>
-    </mappers>
+   <!-- 将写好的sql映射文件注册到全局配置文件中 -->
+   <mappers>
+      <mapper resource="mapper/EmployeeMapper.xml"/>
+   </mappers>
 </configuration>
 ```
 6. 创建mybatis工具类，用以获取sqlSession对象
@@ -177,7 +177,7 @@ public interface EmployeeMapper {
 ```
 
 &emsp;**总结：**
-1. 以前都是一个DaoImpl对应一个接口的实现类。用mybatis后一个接口对应一个mapper配置文件。 
+1. 以前都是一个DaoImpl对应一个接口的实现类。用mybatis后一个接口对应一个mapper配置文件。
 2. SqlSession表示和数据库的一次对话，用完必须关闭。SqlSession和Connection一样，都不是线程安全了，每次使用都应该去获取新的对象。
 3. mapper接口没有实现类，但是mybatis会为这个接口生成一个代理对象(前提是两者进行绑定了)。
 4. 两个重要的配置文件：
@@ -191,19 +191,19 @@ public interface EmployeeMapper {
 # 1. 全局配置文件
 &emsp;MyBatis的配置文件包含了影响MyBatis行为甚深的**设置**和**属性**信息。文档的顶层结构如下：
 * configuration配置<br>
-&emsp; -properties 属性<br>
-&emsp; -settings 设置 <br>
-&emsp; -typeAliases 类型命名 <br>
-&emsp; -typeHandlers 类型处理器 <br>
-&emsp; -objectFactory 对象工厂 <br>
-&emsp; -plugins 插件 <br>
-&emsp; -environments 环境 <br>
-&emsp;&emsp;&emsp; -environment 环境变量 <br>
-&emsp;&emsp;&emsp; -transactionManager 事务管理器 <br>
-&emsp;&emsp;&emsp; -dataSource 数据源 <br>
-&emsp; -databaseIdProvider 数据库厂商标识 <br>
-&emsp; -mappers 映射器 <br>
-  
+  &emsp; -properties 属性<br>
+  &emsp; -settings 设置 <br>
+  &emsp; -typeAliases 类型命名 <br>
+  &emsp; -typeHandlers 类型处理器 <br>
+  &emsp; -objectFactory 对象工厂 <br>
+  &emsp; -plugins 插件 <br>
+  &emsp; -environments 环境 <br>
+  &emsp;&emsp;&emsp; -environment 环境变量 <br>
+  &emsp;&emsp;&emsp; -transactionManager 事务管理器 <br>
+  &emsp;&emsp;&emsp; -dataSource 数据源 <br>
+  &emsp; -databaseIdProvider 数据库厂商标识 <br>
+  &emsp; -mappers 映射器 <br>
+
 ## 1.1 properties标签
 &emsp;1. mybatis可以使用properties来引入外部的properties文件的内容。
 ```xml
@@ -253,15 +253,15 @@ password: 123456
     </environments>
 ```
 ## 1.2 setting标签
-| 设置参数 | 描述 | 有效值 | 默认值 |
-| ---- | ---- | ---- | ---- |
-| cacheEnabled | 该配置影响的所有映射器中配置的缓存全局开关 | true 或者 false | TRUE
-| lazyLoadingEnabled | 延迟加载的全局开关，当开启时，所有关联对象都会延迟加载。特定关联关系中可以通过设置fetchType属性来覆盖该项的开关状态。 | true 或者 false | FALSE |
-| useColumnLabel | 使用列标签代替列名。不同的驱动在这方面会有不同的表现。具体可参考相关驱动文档或通过测试者两种不同的模式来观察所用驱动的结果 | true 或者 false | TRUE |
-| defaultStatementTimeout| 设置超时时间，它决定驱动等待数据库响应的秒数。 | Any positive integer | Not Set(null) |
-| mapUnderscoreToCamelCase | 是否开启自动驼峰命名规则映射，即从经典数据库列名A_COLUMN到经典Java数据名aColumn的类似映射 | true 或者 false | FALSE |
-| ...(还有更多) | ... | ... | ... |
-&emsp;开启自动峰命令规则映射：
+| 设置参数                       | 描述                                                         | 有效值               | 默认值        |
+| ------------------------------ | ------------------------------------------------------------ | -------------------- | ------------- |
+| cacheEnabled                   | 该配置影响的所有映射器中配置的缓存全局开关                   | true 或者 false      | TRUE          |
+| lazyLoadingEnabled             | 延迟加载的全局开关，当开启时，所有关联对象都会延迟加载。特定关联关系中可以通过设置fetchType属性来覆盖该项的开关状态。 | true 或者 false      | FALSE         |
+| useColumnLabel                 | 使用列标签代替列名。不同的驱动在这方面会有不同的表现。具体可参考相关驱动文档或通过测试者两种不同的模式来观察所用驱动的结果 | true 或者 false      | TRUE          |
+| defaultStatementTimeout        | 设置超时时间，它决定驱动等待数据库响应的秒数。               | Any positive integer | Not Set(null) |
+| mapUnderscoreToCamelCase       | 是否开启自动驼峰命名规则映射，即从经典数据库列名A_COLUMN到经典Java数据名aColumn的类似映射 | true 或者 false      | FALSE         |
+| ...(还有更多)                  | ...                                                          | ...                  | ...           |
+| &emsp;开启自动峰命令规则映射： |                                                              |                      |               |
 ``` xml
 <!-- mapper1文件中的查询 -->
     <select id="getEmpById" resultType="bean.Employee">
@@ -441,7 +441,7 @@ public interface EmpMapper {
         // 提交
         sqlSession.commit();
     }
-    
+    top
     // 添加员工
     public void addEmp(EmployeeMapper employeeMapper, Employee employee) {
         System.out.println("添加员工");
@@ -465,14 +465,14 @@ public interface EmpMapper {
         }
     }
 ```
-&emsp;**<font color=#54ff9f>1. 语句提交</font>。当openSession()方法参数是true时，自动提交** 
+&emsp;**<font color=#54ff9f>1. 语句提交</font>。当openSession()方法参数是true时，自动提交**
 ``` java
 SqlSession sqlSession = sqlSessionFactory.openSession(true);
 ```
 &emsp;**<font color=#54ff9f>2. insert获取自增主键。</font>** mysql支持自增主键，在jdbc中获取自增主键是使用statement.getGenreatedKesy()。
 在mybatis也是利用的这个方法。使用步骤是
 * 在&lt;insert&gt;标签中属性设置为
-<font color=#ff7700>useGeneratedKeys=true</font>，使用自增主键获取主键值策略
+  <font color=#ff7700>useGeneratedKeys=true</font>，使用自增主键获取主键值策略
 * <font color=#ff7700>keyProperty=</font>指定对应的主键属性(就是对应的实体类的属性)
 ``` xml
 <!-- mapper文件设置 -->
@@ -535,3 +535,35 @@ SqlSession sqlSession = sqlSessionFactory.openSession(true);
 public Employee mybatisParas(@Param("id") int id, @Param("empName") String empName);
 ```
 &emsp;命名参数：明确指定封装参数时map的key，使用注解@Param("参数名""),多个参数会被封装成一个map
+
+### 2.2.3 参数为POJO
+
+&emsp;如果多个参数恰好是实体类的属性，那么可以直接传入POJO。格式为：#{属性名}：取出POJO的属性值。
+
+### 2.2.4 参数为Map
+
+&emsp;如果多个参数不是POJO，那么也可以传入map，使用#{key}取出对应的值。
+
+``` xml
+<select id="getEmpByMap" resultType="Employee">
+    select * from emp where id=#{id} and emp_name=#{empName}
+</select>
+```
+
+``` java
+Employee getMepByMap(Map<String,Object>map);
+```
+
+``` java
+Map<String,Object> map = new HashMap<>();
+map.put("id",220112);
+map.put("empName","张三");
+mapper.getEmpByMap
+```
+
+&emsp;如果多个参数不是实体类属性，如果不是经常使用，可以选择传Map。但是如果经常使用，推荐编写一个TO(Transfer Object)数据传输对象。
+
+### 
+
+### 2.2.5 mybatis参数处理源码分析
+
