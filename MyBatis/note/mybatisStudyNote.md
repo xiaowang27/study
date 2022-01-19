@@ -1,11 +1,16 @@
 # MyBatis学习笔记
+
 **hibernote框架：** 全自动，要优化sql语句的话得学好HQL
 **MyBatis框架：** 搬自动，将sql的编写提出来交给程序员去编写，不自动化生成。
 
 ---
+
 ### 初次使用MyBatis
+
 &emsp;步骤
+
 1. 创建数据表
+
 ``` sql
 -- 创建员工表
 create table emp(
@@ -18,8 +23,10 @@ email varchar(255)
 -- 插入数据
 INSERT INTO `mybatis_study`.`emp` (`id`, `emp_name`, `gender`, `email`) VALUES (1, 'jack', '0', 'jack@123.com');
 ```
+
 2. 创建工程
 3. 在pom文件中；引入mysql、mybatis、jUnit的依赖
+
 ``` xml
         <dependency>
             <groupId>org.mybatis</groupId>
@@ -39,7 +46,9 @@ INSERT INTO `mybatis_study`.`emp` (`id`, `emp_name`, `gender`, `email`) VALUES (
             <version>4.10</version>
         </dependency>
 ```
+
 4. 创建实体类
+
 ``` java
 package bean;
 
@@ -58,7 +67,9 @@ public class Employee {
 }
 
 ```
+
 5. 编写mybatis配置文件，设置数据库地址等信息
+
 ```xml
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE configuration
@@ -83,7 +94,9 @@ public class Employee {
    </mappers>
 </configuration>
 ```
+
 6. 创建mybatis工具类，用以获取sqlSession对象
+
 ``` java
 public class MyBatisUtil {
 
@@ -110,7 +123,9 @@ public class MyBatisUtil {
 }
 
 ```
+
 7. 编写mapper映射文件，编写sql语句
+
 ``` xml
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
@@ -132,7 +147,9 @@ public class MyBatisUtil {
     </select>
 </mapper>
 ```
+
 8. 将mapper映射文件在mybatis全局配置文件中注册
+
 ``` xml
     <mappers>
         <mapper resource="mapper/EmployeeMapper.xml"/>
@@ -140,19 +157,26 @@ public class MyBatisUtil {
 ```
 
 ---
+
 ### 接口式编程
+
 1. 创建接口，编写数据库操作的方法
+
 ``` java
 public interface EmployeeMapper {
     public Employee getEmpById(Integer id);
 }
 
 ```
+
 2. 将接口和mapper文件绑定。在mapper文件中，将命名空间改为接口的全限定类名
+
 ``` xml
 <mapper namespace="dao.EmployeeMapper">
 ```
+
 3. 在测试方法中通过接口获取实现类对象
+
 ``` java
     public SqlSessionFactory getSqlSessionFactory() throws IOException{
         String resource = "config/mybatis-config.xml";
@@ -177,6 +201,7 @@ public interface EmployeeMapper {
 ```
 
 &emsp;**总结：**
+
 1. 以前都是一个DaoImpl对应一个接口的实现类。用mybatis后一个接口对应一个mapper配置文件。
 2. SqlSession表示和数据库的一次对话，用完必须关闭。SqlSession和Connection一样，都不是线程安全了，每次使用都应该去获取新的对象。
 3. mapper接口没有实现类，但是mybatis会为这个接口生成一个代理对象(前提是两者进行绑定了)。
@@ -189,7 +214,9 @@ public interface EmployeeMapper {
 ---
 
 # 1. 全局配置文件
+
 &emsp;MyBatis的配置文件包含了影响MyBatis行为甚深的**设置**和**属性**信息。文档的顶层结构如下：
+
 * configuration配置<br>
   &emsp; -properties 属性<br>
   &emsp; -settings 设置 <br>
@@ -205,17 +232,21 @@ public interface EmployeeMapper {
   &emsp; -mappers 映射器 <br>
 
 ## 1.1 properties标签
+
 &emsp;1. mybatis可以使用properties来引入外部的properties文件的内容。
+
 ```xml
     <!-- url: 引入网络路径或磁盘路径下的资源 -->
     <properties url=""></properties>
 ```
+
 ``` xml
     <!-- resource: 引入类路径下的资源 -->
    <properties resource=""></properties>
 ```
 
 &emsp;<font color=#ff7700>**尝试：改变mybatis-config.xml文件，使数据库连接等信息都是从另一个文件读取而来的**</font>
+
 ``` xml
 <!-- 最开始的mybatis-config.xml文件内容 -->
     <environments default="development">
@@ -252,7 +283,9 @@ password: 123456
         </environment>
     </environments>
 ```
+
 ## 1.2 setting标签
+
 | 设置参数                       | 描述                                                         | 有效值               | 默认值        |
 | ------------------------------ | ------------------------------------------------------------ | -------------------- | ------------- |
 | cacheEnabled                   | 该配置影响的所有映射器中配置的缓存全局开关                   | true 或者 false      | TRUE          |
@@ -262,29 +295,37 @@ password: 123456
 | mapUnderscoreToCamelCase       | 是否开启自动驼峰命名规则映射，即从经典数据库列名A_COLUMN到经典Java数据名aColumn的类似映射 | true 或者 false      | FALSE         |
 | ...(还有更多)                  | ...                                                          | ...                  | ...           |
 | &emsp;开启自动峰命令规则映射： |                                                              |                      |               |
+
 ``` xml
 <!-- mapper1文件中的查询 -->
     <select id="getEmpById" resultType="bean.Employee">
         select id,emp_name empName,gender,email from emp where id = #{id}
     </select>
 ```
+
 &emsp;开启前的输出
+
 >Employee{id=1, empName='null', gender='0', email='jack@123.com'}
 
 &emsp;开启后的输出
+
 >Employee{id=1, empName='jack', gender='0', email='jack@123.com'}
 
 &emsp;因为在实体类Employee中时empName，而在数据表emp中则是emp_name
 
 ## 1.3 typeHandlers标签
+
 &emsp;类型处理器标签。Java数据类型和数据库类型映射的桥梁。
 
 
 ## 1.4 plugins标签
+
 &emsp;插件标签。
 
 ## 1.5 environments标签
+
 &emsp;环境标签。
+
 ```xml
     <!--
         mybatis可以配置多种环境，default指定使用某种黄金，可以达到快速切换环境
@@ -309,8 +350,10 @@ password: 123456
 ```
 
 ## 1.6 databaseIdProvider标签
+
 &emsp;mybatis可以支持不同数据库厂商，执行不同的sql语句。
 &emsp;在mybatis的配置文件中配置
+
 ``` xml
     <!--
         databaseIdProvider支持多数据库厂商
@@ -327,6 +370,7 @@ password: 123456
 ```
 
 &emsp;在mapper文件中，告诉sql标签
+
 ``` xml
     <select id="selectEmpList02" resultType="bean.Employee" 
     databaseId="mysql">
@@ -335,7 +379,9 @@ password: 123456
 ```
 
 ## 1.7 mapper标签
+
 &emsp;sql映射标签。将sql映射注册到全局中。
+
 ``` xml
     <!-- 将写好的sql映射文件注册到全局配置文件中 -->
     <mappers>
@@ -358,6 +404,7 @@ password: 123456
 ```
 
 &emsp;接口写法：
+
 ``` java
 public interface EmpMapper {
     @Select("select * from emp")
@@ -366,7 +413,9 @@ public interface EmpMapper {
 ```
 
 # 2. mybatis映射文件
+
 &emsp;映射文件指导着mybatis如何进行数据库增删改查。
+
 * cache 命名空间的二级缓存设置
 * cache-ref 其他密码空间缓存配置的引用
 * resultMap 自定义结果集映射
@@ -378,7 +427,9 @@ public interface EmpMapper {
 * select 映射查询语句
 
 ## 2.1 增删改语句
+
 **mapper文件**
+
 ``` xml
  <!-- 增加员工方法 -->
     <insert id="addEmp" parameterType="bean.Employee">
@@ -398,7 +449,9 @@ public interface EmpMapper {
         delete from emp where id=#{id}
     </delete>
 ```
+
 **dao接口**
+
 ``` java
     // 增加员工方法
     public Integer addEmp(Employee employee);
@@ -412,6 +465,7 @@ public interface EmpMapper {
 ```
 
 **测试方法**
+
 ``` java
    @Test
     public void crudTest() throws IOException {
@@ -465,15 +519,20 @@ public interface EmpMapper {
         }
     }
 ```
+
 &emsp;**<font color=#54ff9f>1. 语句提交</font>。当openSession()方法参数是true时，自动提交**
+
 ``` java
 SqlSession sqlSession = sqlSessionFactory.openSession(true);
 ```
+
 &emsp;**<font color=#54ff9f>2. insert获取自增主键。</font>** mysql支持自增主键，在jdbc中获取自增主键是使用statement.getGenreatedKesy()。
 在mybatis也是利用的这个方法。使用步骤是
+
 * 在&lt;insert&gt;标签中属性设置为
   <font color=#ff7700>useGeneratedKeys=true</font>，使用自增主键获取主键值策略
 * <font color=#ff7700>keyProperty=</font>指定对应的主键属性(就是对应的实体类的属性)
+
 ``` xml
 <!-- mapper文件设置 -->
     <!-- 增加员工方法 -->
@@ -485,9 +544,11 @@ SqlSession sqlSession = sqlSessionFactory.openSession(true);
 
 
 ## 2.2 参数处理
+
 ### 2.2.1 单个参数
 
 单个参数mybatis不会做特殊处理，形式：#{参数名}。参数名写什么都可以。
+
 ``` xml
     <select id="getEmpById" resultType="bean.Employee">
         select *
@@ -497,7 +558,9 @@ SqlSession sqlSession = sqlSessionFactory.openSession(true);
 ```
 
 ### 2.2.2 多个参数
+
 多个参数mybatis会做特殊处理，多个参数会被封转成一个map，#{}就是从map中获取指定的key值。以下面为例
+
 ``` xml
     <!-- mybatis多个参数处理 -->
     <select id="mybatisParas" resultType="bean.Employee">
@@ -520,8 +583,10 @@ SqlSession sqlSession = sqlSessionFactory.openSession(true);
       Cause: org.apache.ibatis.binding.BindingException: Parameter 'id' not found. Available parameters are [arg1, arg0, param1, param2]
     */
 ```
+
 &emsp;map是[param1:value1,param2:value2...]，所以多个参数取值的话可以使用#{param1}...或[索引]。
 更改xml文件的取值如下，就不会报错了
+
 ``` xml
     <!-- mybatis多个参数处理 -->
     <select id="mybatisParas" resultType="bean.Employee">
@@ -530,11 +595,13 @@ SqlSession sqlSession = sqlSessionFactory.openSession(true);
 ```
 
 &emsp;采用param1、param2...这种方法不够直观看出参数，所以可以使用<font color=#ff700>命名参数</font>的方法，使用方法如下：
+
 ``` java
 // dao接口的方法
 public Employee mybatisParas(@Param("id") int id, @Param("empName") String empName);
 ```
-&emsp;命名参数：明确指定封装参数时map的key，使用注解@Param("参数名""),多个参数会被封装成一个map
+
+&emsp;命名参数：明确指定封装参数时map的key，使用注解@Param("参数名""),多个参数会被封装成一个map```````````````````````````````````
 
 ### 2.2.3 参数为POJO
 
@@ -563,7 +630,115 @@ mapper.getEmpByMap
 
 &emsp;如果多个参数不是实体类属性，如果不是经常使用，可以选择传Map。但是如果经常使用，推荐编写一个TO(Transfer Object)数据传输对象。
 
-### 
-
 ### 2.2.5 mybatis参数处理源码分析
+
+
+
+
+
+### 2.2.6 #和$取值的区别
+
+&emsp;${}：是以预编译的形式，将参数设置到sql语句中；PreparedStatement；可以防止sql注入
+
+&emsp;#{}：取出的值直接拼装在sql语句中，会有安全问题
+
+&emsp;mapper文件中的sql语句
+
+```xml
+    <select id="getEmpByMap" resultType="bean.Employee">
+        select * from emp where id=#{id} and emp_name=${empName}
+    </select>
+```
+
+&emsp;mybatis转换后的sql语句
+
+```sql
+select * from emp where id=? and emp_name=张三
+```
+
+&emsp;在大多数情况下，取值都应该去使用#{}。在分库分表的情况下(原生jdbc不支持占位符的地方)，，就可以使用${}进行取值，比如取不同年份的工资表数据：
+
+```sql
+select * from ${year}_salary where xxx;
+```
+
+&emsp;再比如排序
+
+```sql
+select * from tb1_emp order_by ${f_name} ${order}
+```
+
+&emsp;**#{}**更丰富的用法：
+
+&emsp;&emsp;规定参数的一些规则：
+
+&emsp;&emsp;javaType、jdbcType、mode(存储过程)、numericScale、resultType、typeHandler、jdbcTypeName、expression(未来准备支持的功能)
+
+&emsp;jdbcType通常需要再某种特定条件下被设置：比如再我们传递的参数为null时，有些数据库可能不能识别mybatis对null的默认处理，比如oracle环境下时，会报错```JdbcType OTHER```无效的类型。因为mybatis对所有的null都映射的是原生jdbc的other类型，oracle不能正确处理。 在mybatis的全局配置文件中：```JdbcTypeForNull=OTHER；```，oracle不支持OTHER类型。解决方法：
+
+```xml
+// 1. 影响当前语句的JdbcType
+select * from emp where id=#{id} and emp_name=#{empName JdbcType=OTHER}
+
+// 2. 改变全局配置，在mybatis配置文件的settings标签下的setting标签
+JdbcTypeForNull=NULL
+```
+
+## 2.3 查询语句——select元素
+
+### 2.3.1 返回值类型为集合
+
+&emsp;当dao接口方法的返回值是集合时，mapper文件中select元素的resultType属性的值应该是集合内的元素的类型。例如：
+
+```java
+    List<Employee> getEmpByLastnameLike();
+```
+
+```xml
+    <select id="getEmpByLastNameLike" resultType="bean.Employee">
+        select * from emp;
+    </select>
+```
+
+### 2.3.2 返回值类型为Map
+
+&emsp;返回一条记录的map，Key就是列名，值就是对应的值
+
+```xml
+    <select id="getEmpByLastNameMap" resultType="map">
+        select * from emp where id=#{param1}
+    </select>
+```
+
+```java
+Map<String,Object> getEmpByLastNameMap(Integer id);
+```
+
+&emsp;查询多条记录，并将其封装成一个Map：Map<Integer,Employee>，键是这条记录的主键，值是封装后的javabean对象
+
+
+
+### 2.3.3 resultMap属性
+
+&emsp;resultMap用于自定义某个javaBean的封装规则，type表示自定义的Java类型，id是唯一的，方便引用。示例如下
+
+```xml
+    <!-- resultMap自定义封装规则 -->
+    <resultMap id="MyEmp" type="bean.Employee">
+        <!--
+            id标签用于定义逐渐列的封装规则，定义逐渐底层有优化
+            column指定那一列的字段为逐渐
+            property指定对象的javaBean属性
+        -->
+        <id column="id" property="id"/>
+
+        <!--定义普通列封装规则-->
+        <result column="emp_name" property="empName"/>
+        <!-- 其他不指定的列会自动封装，但是推荐只要写resultMap，就将全部的映射规则都写上，方便检查-->
+    </resultMap>
+    
+    <select id="getByIdResultMap" resultMap="MyEmp">
+        select * from emp where id=#{id}
+    </select>
+```
 

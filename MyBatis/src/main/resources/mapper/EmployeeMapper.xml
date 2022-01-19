@@ -60,4 +60,38 @@
     <select id="getEmpByMap" resultType="bean.Employee">
         select * from emp where id=#{id} and emp_name=#{empName}
     </select>
+
+    <!-- dao接口的返回值是集合 -->
+    <select id="getEmpByLastnameLike" resultType="bean.Employee">
+        select * from emp
+    </select>
+
+    <!-- dao接口的返回值时Map -->
+    <select id="getEmpByLastNameMap" resultType="map">
+        select * from emp where id=#{param1}
+    </select>
+
+    <!-- 多条记录封装成一个Map -->
+    <select id="getEmpByReturnMaps" resultType="bean.Employee">
+        select *
+        from emp
+    </select>
+
+    <!-- resultMap自定义封装规则 -->
+    <resultMap id="MyEmp" type="bean.Employee">
+        <!--
+            id标签用于定义逐渐列的封装规则，定义逐渐底层有优化
+            column指定那一列的字段为逐渐
+            property指定对象的javaBean属性
+        -->
+        <id column="id" property="id"/>
+
+        <!--定义普通列封装规则-->
+        <result column="emp_name" property="empName"/>
+        <!-- 其他不指定的列会自动封装，但是推荐只要写resultMap，就将全部的映射规则都写上，方便检查-->
+    </resultMap>
+    
+    <select id="getByIdResultMap" resultMap="MyEmp">
+        select * from emp where id=#{id}
+    </select>
 </mapper>

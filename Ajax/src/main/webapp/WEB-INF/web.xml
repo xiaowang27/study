@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.4"
+         xmlns="http://java.sun.com/xml/ns/j2ee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+
+  <!-- 全局刷新 -->
+  <servlet>
+    <servlet-name>BmiServlet</servlet-name>
+    <servlet-class>BmiServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>BmiServlet</servlet-name>
+    <url-pattern>/bmiServlet</url-pattern>
+  </servlet-mapping>
+
+  <!-- 局部刷新 -->
+  <servlet>
+    <servlet-name>AjaxBmiServlet</servlet-name>
+    <servlet-class>AjaxBmiServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>AjaxBmiServlet</servlet-name>
+    <url-pattern>/ajaxBmiServlet</url-pattern>
+  </servlet-mapping>
+
+</web-app>
+        

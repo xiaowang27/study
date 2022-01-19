@@ -169,4 +169,34 @@ public class MyBatisUtil {
         System.out.println(empByMap);
         sqlSession.close();
     }
+
+    // 查询语句-select元素
+    @Test
+    public void selectElement() throws IOException {
+        SqlSession sqlSession = getSqlSessionFactory().openSession();
+        EmployeeMapper mapper = sqlSession.getMapper(EmployeeMapper.class);
+        List<Employee> empByLastnameLike = mapper.getEmpByLastnameLike();
+        for(Employee e:empByLastnameLike){
+            System.out.println(e);
+        }
+
+        // 返回值是一条记录且类型为Map
+        Map<String, Object> empByLastNameMap = mapper.getEmpByLastNameMap(1);
+        System.out.println(empByLastNameMap);
+
+        // 返回值是多条记录且类型为Map
+        Map<Integer, Employee> empByReturnMaps = mapper.getEmpByReturnMaps();
+        System.out.println(empByReturnMaps);
+        sqlSession.close();
+    }
+
+    // 查询语句-select元素
+    @Test
+    public void selectElementResultMap() throws IOException {
+        SqlSession sqlSession = getSqlSessionFactory().openSession();
+        EmployeeMapper mapper = sqlSession.getMapper(EmployeeMapper.class);
+        Employee byIdResultMap = mapper.getByIdResultMap(2);
+        System.out.println(byIdResultMap);
+        sqlSession.close();
+    }
 }

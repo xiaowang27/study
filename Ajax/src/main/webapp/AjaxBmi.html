@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zn">
+<head>
+    <meta charset="UTF-8">
+    <title>Ajax局部刷新计算bmi</title>
+    <script>
+        function doAjax() {
+            // 1. 创建异步对象
+            var xhr = new XMLHttpRequest();
+            // 2. 绑定事件
+            xhr.onreadystatechange = function () {
+                // 处理服务器端返回的数据，更新当前页面
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    alert(xhr.responseText)
+                    document.getElementById("resultP").innerHTML = xhr.responseText;
+                }
+            };
+            // 3. 初始请求数据
+            // 获取dom对象的value值
+            var name = document.getElementById("name").value;
+            var weight = document.getElementById("weight").value;
+            var height = document.getElementById("height").value;
+            var param = name + "&weight=" + weight + "&height=" + height
+            alert(param)
+            xhr.open("get", "ajaxBmiServlet?name=" + param, true)
+            // 4. 发起请求
+            xhr.send();
+        }
+    </script>
+</head>
+<body>
+    <P>Ajax局部刷新</P>
+    <div action="bmiServlet" method="get">
+        姓名:<input type="text" id="name"><br>
+        体重(Kg):<input type="text" id="weight"><br>
+        身高(M):<input type="text" id="height"><br>
+        <input type="button" value="计算bmi" onclick="doAjax()"><br>
+        <p id="resultP"> bmi值：</p>
+    </div>
+    <!-- 没有使用form -->
+</body>
+</html>
