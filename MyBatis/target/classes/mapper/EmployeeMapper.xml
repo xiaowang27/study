@@ -97,7 +97,7 @@
 
 
     <!-- 关联查询 -->
-    <resultMap id="EmpAndDept" type="bean.Employee">
+    <resultMap id="EmpAndDeptOne" type="bean.Employee">
         <id column="id" property="id"></id>
         <result column="emp_name" property="empName"/>
         <result column="gender" property="gender"/>
@@ -108,9 +108,50 @@
     <select id="getEmpAndDept" resultMap="EmpAndDept">
         select t1.id,t1.emp_name,t1.gender,t1.email,t1.dept_id,t2.dept_name
         from emp t1,dept t2
-        where t1.dept_id=t2.id and t1.id=#{id}
+        where t1.dept_id=t2.dept_id and t1.id=#{id}
     </select>
 
+    <!-- 关联查询之使用association标签 -->
+    <resultMap id="EmpAndDept" type="bean.Employee">
+        <id column="id" property="id"/>
+        <result column="emp_name" property="empName"/>
+        <result column="gender" property="gender"/>
+        <result column="email" property="email"/>
+
+        <!--
+            association可以指定联合的JavaBean对象
+            property指定哪个属性是联合对象，比如emp对象中有个属性叫做dept，是另一个实体类对象
+            javaType指定这个属性对象的类型，比如dept的实体类是Department
+        -->
+        <association property="dept" javaType="bean.Department">
+            <id column="dept_id" property="deptId"/>
+            <result column="dept_name" property="deptName"/>
+        </association>
+    </resultMap>
+
+    <!-- association分步查询 -->
+    <resultMap id="resultEmpIdAndDeptId" type="bean.Employee">
+        <id column="id" property="id"/>
+        <result column="emp_name" property="empName"/>
+        <result column="gender" property="gender"/>
+        <result column="email" property="email"/>
+        <result column="dept_id" property="deptId"/>
+
+
+        <!--
+            1. 先根据员工id查找员工信息
+            2. 根据员工信息中的dept_id去dept表查部门信息
+            3. 将部门信息设置到员工中
+
+            select表明当前属性是调用select指定的方法查出结果
+            column指定将那一列的值传递给这个方法
+        -->
+        <association property="dept" select="dao.DepartmentDAO.getByDeptId" column="dept_id"/>
+
+    </resultMap>
+    <select id="getByEmpIdSelectDeptName" resultMap="resultEmpIdAndDeptId">
+        select * from emp where id=#{id}
+    </select>
 
 
 </mapper>

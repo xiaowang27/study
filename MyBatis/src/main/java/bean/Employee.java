@@ -5,6 +5,7 @@ public class Employee {
     private String empName;
     private String gender;
     private String email;
+    private Integer deptId;
     private Department dept;
 
     public Integer getId() {
@@ -39,6 +40,14 @@ public class Employee {
         this.email = email;
     }
 
+    public Department getDept() {
+        return dept;
+    }
+
+    public void setDept(Department dept) {
+        this.dept = dept;
+    }
+
     @Override
     public String toString() {
         return "Employee{" +
@@ -46,6 +55,8 @@ public class Employee {
                 ", empName='" + empName + '\'' +
                 ", gender='" + gender + '\'' +
                 ", email='" + email + '\'' +
+                ", deptId=" + deptId +
+                ", dept=" + dept +
                 '}';
     }
 }

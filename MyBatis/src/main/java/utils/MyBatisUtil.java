@@ -195,8 +195,25 @@ public class MyBatisUtil {
     public void selectElementResultMap() throws IOException {
         SqlSession sqlSession = getSqlSessionFactory().openSession();
         EmployeeMapper mapper = sqlSession.getMapper(EmployeeMapper.class);
-        Employee byIdResultMap = mapper.getEmpAndDept(220114);
+        Employee byIdResultMap = mapper.getByIdResultMap(1);
         System.out.println(byIdResultMap);
+        sqlSession.close();
+    }
+
+
+    // 关联查询之[级联属性查询]、[association联合查询]、[association分步查询]
+    @Test
+    public void getEmpAndDept() throws IOException {
+        SqlSession sqlSession = getSqlSessionFactory().openSession();
+        EmployeeMapper mapper = sqlSession.getMapper(EmployeeMapper.class);
+        Employee byIdResultMap = mapper.getEmpAndDept(1);
+        System.out.println(byIdResultMap);
+
+        // 分步查询
+        Employee byEmpIdSelectDeptName = mapper.getByEmpIdSelectDeptName(4);
+        System.out.println("分步查询的结果");
+        System.out.println(byEmpIdSelectDeptName);
+        System.out.println(byEmpIdSelectDeptName.getDept());
         sqlSession.close();
     }
 }
