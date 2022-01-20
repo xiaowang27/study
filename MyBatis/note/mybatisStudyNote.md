@@ -76,22 +76,22 @@ public class Employee {
         PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
-   <environments default="development">
-      <environment id="development">
-         <transactionManager type="JDBC"/>
-         <dataSource type="POOLED">
-            <property name="driver" value="com.mysql.jdbc.Driver"/>
-            <property name="url" value="jdbc:mysql://localhost:3306/mybatis_study"/>
-            <property name="username" value="root"/>
-            <property name="password" value="123456"/>
-         </dataSource>
-      </environment>
-   </environments>
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="com.mysql.jdbc.Driver"/>
+                <property name="url" value="jdbc:mysql://localhost:3306/mybatis_study"/>
+                <property name="username" value="root"/>
+                <property name="password" value="123456"/>
+            </dataSource>
+        </environment>
+    </environments>
 
-   <!-- 将写好的sql映射文件注册到全局配置文件中 -->
-   <mappers>
-      <mapper resource="mapper/EmployeeMapper.xml"/>
-   </mappers>
+    <!-- 将写好的sql映射文件注册到全局配置文件中 -->
+    <mappers>
+        <mapper resource="mapper/EmployeeMapper.xml"/>
+    </mappers>
 </configuration>
 ```
 
@@ -237,7 +237,7 @@ public interface EmployeeMapper {
 
 ```xml
     <!-- url: 引入网络路径或磁盘路径下的资源 -->
-    <properties url=""></properties>
+<properties url=""></properties>
 ```
 
 ``` xml
@@ -336,17 +336,17 @@ password: 123456
             dataSource：数据源类型。UNPOOLED|POOLED|JNDI
                         自定义数据源：实现DataSourceFactory接口，type指定全类名
      -->
-    <environments default="development">
-        <environment id="development">
-            <transactionManager type="JDBC"/>
-            <dataSource type="POOLED">
-                <property name="driver" value="${driver}"/>
-                <property name="url" value="${url}"/>
-                <property name="username" value="${username}"/>
-                <property name="password" value="${password}"/>
-            </dataSource>
-        </environment>
-    </environments>
+<environments default="development">
+    <environment id="development">
+        <transactionManager type="JDBC"/>
+        <dataSource type="POOLED">
+            <property name="driver" value="${driver}"/>
+            <property name="url" value="${url}"/>
+            <property name="username" value="${username}"/>
+            <property name="password" value="${password}"/>
+        </dataSource>
+    </environment>
+</environments>
 ```
 
 ## 1.6 databaseIdProvider标签
@@ -646,8 +646,8 @@ mapper.getEmpByMap
 
 ```xml
     <select id="getEmpByMap" resultType="bean.Employee">
-        select * from emp where id=#{id} and emp_name=${empName}
-    </select>
+    select * from emp where id=#{id} and emp_name=${empName}
+</select>
 ```
 
 &emsp;mybatis转换后的sql语句
@@ -668,7 +668,7 @@ select * from ${year}_salary where xxx;
 select * from tb1_emp order_by ${f_name} ${order}
 ```
 
-&emsp;**#{}** 更丰富的用法：
+&emsp;**#{}**更丰富的用法：
 
 &emsp;&emsp;规定参数的一些规则：
 
@@ -716,8 +716,6 @@ Map<String,Object> getEmpByLastNameMap(Integer id);
 
 &emsp;查询多条记录，并将其封装成一个Map：Map<Integer,Employee>，键是这条记录的主键，值是封装后的javabean对象
 
-
-
 ### 2.3.3 resultMap属性
 
 &emsp;resultMap用于自定义某个javaBean的封装规则，type表示自定义的Java类型，id是唯一的，方便引用。示例如下
@@ -741,4 +739,142 @@ Map<String,Object> getEmpByLastNameMap(Integer id);
         select * from emp where id=#{id}
     </select>
 ```
+
+## 2..4 关联查询
+
+### 2.4.1 级联属性封装结果
+
+&emsp;需求：查询员工的同时查询它的部门
+
+**数据库准备**：
+
+```sql
+create table dept(
+    id int(11) primary key auto_increment
+    dept_name varchar(40) not null
+);
+
+alter table emp add column dept_id int(11);
+
+alter table emp 
+add constraint fk_emp_dept 
+foreign key(dept_id) references dept(id)
+-- alter table 从表
+-- add constraint 约束名 foreign key (关联字段) references 主表(关联字段)
+```
+
+**mapper文件：**
+
+```xml
+    <!-- 关联查询 -->
+    <resultMap id="EmpAndDept" type="bean.Employee">
+        <id column="id" property="id"></id>
+        <result column="emp_name" property="empName"/>
+        <result column="gender" property="gender"/>
+        <result column="email" property="email"/>
+        <result column="dept_id" property="dept.deptId"/>
+        <result column="dept_name" property="dept.deptName"/>
+    </resultMap>
+    <select id="getEmpAndDept" resultMap="EmpAndDept">
+        select t1.id,t1.emp_name,t1.gender,t1.email,t1.dept_id,t2.dept_name
+        from emp t1,dept t2
+        where t1.dept_id=t2.id and t1.id=#{id}
+    </select>
+```
+
+**javaBean：**
+
+```java
+// 准备一个与dept对应的entity
+// 在emp对应的entity中添加一个属性
+private Department dept;
+```
+
+
+
+### 2.4.2 association定义联合属性
+
+&emsp;在resultMap标签中通过<association>标签去定义其他实体类的属性，来进行联合查询。
+
+**mapper文件：**
+
+``` xml
+    <select id="getEmpAndDept" resultMap="EmpAndDept">
+        select t1.id,t1.emp_name,t1.gender,t1.email,t1.dept_id,t2.dept_name
+        from emp t1,dept t2
+        where t1.dept_id=t2.dept_id and t1.id=#{id}
+    </select>
+
+    <!-- 关联查询之使用association标签 -->
+    <resultMap id="EmpAndDept" type="bean.Employee">
+        <id column="id" property="id"></id>
+        <result column="emp_name" property="empName"/>
+        <result column="gender" property="gender"/>
+        <result column="email" property="email"/>
+
+        <!--
+            association可以指定联合的JavaBean对象
+            property指定哪个属性是联合对象，比如emp对象中有个属性叫做dept，是另一个实体类对象
+            javaType指定这个属性对象的类型，比如dept的实体类是Department
+        -->
+        <association property="dept" javaType="bean.Department">
+            <id column="dept_id" property="deptId"/>
+            <result column="dept_name" property="deptName"/>
+        </association>
+    </resultMap>
+```
+
+
+
+### 2.4.3 association进行分步查询
+
+&emsp;在2.4.2中，可以将分两步执行，第一步查员工的部门id。第二部通过部门id查找部门名称。使用association可以进行分步查询。
+
+创建部门表的查询方法，DepartmentMapper.xml文件方法
+
+```xml
+    <select id="getByDeptId>" resultType="bean.Department">
+        select dept_name from dept where dept_id=#{deptId}
+    </select>
+```
+
+EmployeeMapper.xml文件方法
+
+```xml
+    <!-- association分步查询 -->
+    <resultMap id="resultEmpIdAndDeptId" type="bean.Employee">
+        <id column="id" property="id"/>
+        <result column="emp_name" property="empName"/>
+        <result column="gender" property="gender"/>
+        <result column="email" property="email"/>
+        <result column="dept_id" property="deptId"/>
+
+
+        <!--
+            1. 先根据员工id查找员工信息
+            2. 根据员工信息中的dept_id去dept表查部门信息
+            3. 将部门信息设置到员工中
+
+            select表明当前属性是调用select指定的方法查出结果
+            column指定将那一列的值传递给这个方法
+        -->
+        <association property="dept" select="dao.DepartmentDAO.getByDeptId" column="dept_id"/>
+
+    </resultMap>
+    <select id="getByEmpIdSelectDeptName" resultMap="resultEmpIdAndDeptId">
+        select * from emp where id=#{id}
+    </select>
+```
+
+DepartmentMapper.xml
+
+```xml
+<mapper namespace="dao.DepartmentDAO">
+    <select id="getByDeptId" resultType="bean.Department">
+        select * from dept where dept_id=#{deptId}
+    </select>
+</mapper>
+```
+
+
 
