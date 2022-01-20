@@ -668,7 +668,7 @@ select * from ${year}_salary where xxx;
 select * from tb1_emp order_by ${f_name} ${order}
 ```
 
-&emsp;**#{}**更丰富的用法：
+&emsp;**#{}** 更丰富的用法：
 
 &emsp;&emsp;规定参数的一些规则：
 

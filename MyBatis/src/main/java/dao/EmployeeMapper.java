@@ -45,4 +45,7 @@ public interface EmployeeMapper {
     // 自定义返回结果的封装规则
     Employee getByIdResultMap(Integer id);
 
+    // 关联查询，查询员工的同时查询他的部门
+    Employee getEmpAndDept(Integer id);
+
 }

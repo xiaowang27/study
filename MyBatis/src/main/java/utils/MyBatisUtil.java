@@ -190,12 +190,12 @@ public class MyBatisUtil {
         sqlSession.close();
     }
 
-    // 查询语句-select元素
+    // 查询语句-resultMap
     @Test
     public void selectElementResultMap() throws IOException {
         SqlSession sqlSession = getSqlSessionFactory().openSession();
         EmployeeMapper mapper = sqlSession.getMapper(EmployeeMapper.class);
-        Employee byIdResultMap = mapper.getByIdResultMap(2);
+        Employee byIdResultMap = mapper.getEmpAndDept(220114);
         System.out.println(byIdResultMap);
         sqlSession.close();
     }
