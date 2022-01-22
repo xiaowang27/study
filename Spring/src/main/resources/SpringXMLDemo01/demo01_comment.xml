@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context
+                           https://www.springframework.org/schema/context/spring-context.xsd ">
+    <!-- 开启包扫描
+     如果扫描多个包，用逗号将包的全限定类名分割，或者直接扫描包的上层目录
+-->
+    <context:component-scan base-package="demo01.comment"></context:component-scan>
+
+
+<!--    &lt;!&ndash; 包扫描配置-示例1-->
+<!--         use-default-filters="false" 表示现在不使用默认的filter，使用自己配置filter-->
+<!--         context:include-filter 设置扫描那些内容-->
+<!--         type="annotation" 扫描注解-->
+<!--         expression="org.springframework.stereotype.Service" Service注解-->
+<!--    &ndash;&gt;-->
+<!--    <context:component-scan base-package="demo01.comment.service" use-default-filters="false">-->
+<!--        <context:include-filter type="annotation" expression="org.springframework.stereotype.Service"/>-->
+<!--    </context:component-scan>-->
+
+<!--    &lt;!&ndash; 包扫描配置-示例2-->
+<!--     context:exclude-filter 设置不扫描那些内容-->
+<!--     type="annotation" 扫描注解-->
+<!--     expression="org.springframework.stereotype.Service" 不扫描Service注解-->
+<!--&ndash;&gt;-->
+<!--    <context:component-scan base-package="demo01.comment.service" use-default-filters="false">-->
+<!--        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>-->
+<!--    </context:component-scan>-->
+</beans>

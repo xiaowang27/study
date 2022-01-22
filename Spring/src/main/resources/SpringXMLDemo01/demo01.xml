@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="people" class="demo01.People"/>
+
+
+    <!-- 使用set方法进行依赖注入 -->
+    <bean id="bookSetDI" class="demo01.Book">
+        <!-- name：属性名    value：属性值 -->
+        <property name="bookName" value="spring实战"/>
+    </bean>
+
+    <!-- 使用有参构造器进行依赖注入 -->
+    <bean id="bookConstructDI" class="demo01.Book">
+        <constructor-arg name="bookName" value="&lt;&lt;Spring从入门到放弃&gt;&gt;"/>
+    </bean>
+
+    <!-- 注入属性之外部bean -->
+    <bean id="BookDao" class="demo01.dao.impl.BookDaoImpl"/>
+
+    <bean id="BookService" class="demo01.service.impl.BookServiceImpl">
+        <!--
+            name属性：类中属性名
+            ref属性：外部bean的bean标签id
+        -->
+        <property name="bookDao" ref="BookDao"/>
+    </bean>
+
+    <!-- 注入属性之内部bean -->
+    <bean id="empBean" class="demo01.bean.Emp">
+        <property name="empName" value="张三"/>
+        <property name="gender" value="男"/>
+        <property name="dept">
+            <bean id="deptBean" class="demo01.bean.Dept">
+                <!-- 内部bean的级联赋值 -->
+                <property name="deptName" value="开发部"/>
+            </bean>
+        </property>
+    </bean>
+
+
+    <!-- 外部bean的级联赋值的方法 -->
+    <bean id="empBean2" class="demo01.bean.Emp">
+        <property name="empName" value="张三"/>
+        <property name="gender" value="男"/>
+        <property name="dept" ref="deptBean2"/>
+        <property name="dept.deptName" value="测试部"></property>
+    </bean>
+    <bean id="deptBean2" class="demo01.bean.Dept"/>
+
+    <!-- 对集合属性赋值 -->
+    <bean id="collectionDI" class="demo01.collection.ArrayTest">
+        <property name="arr">
+            <array>
+                <value>2020</value>
+                <value>2021</value>
+            </array>
+        </property>
+
+        <property name="list">
+            <list>
+                <value>C语言</value>
+                <value>数据结构</value>
+            </list>
+        </property>
+
+        <property name="map">
+            <map>
+                <entry key="张三" value="1001"></entry>
+                <entry key="李四" value="1002"></entry>
+            </map>
+        </property>
+
+        <property name="set">
+            <set>
+                <value>永远相信美好的事情即将发生</value>
+                <value>数组类型的属性可以使用list标签也可以使用array标签</value>
+                <value>现在存在的两个问题</value>
+                <value>1. 若集合中存储的数据类型是自定义对象时，如何注入？</value>
+                <value>2. 注入的集合不能复用</value>
+            </set>
+        </property>
+
+        <property name="students">
+            <list>
+                <ref bean="studetns1"></ref>
+                <ref bean="studetns2"></ref>
+                <ref bean="studetns3"></ref>
+            </list>
+        </property>
+    </bean>
+
+    <!-- 集合中的类型自定义-->
+    <bean id="studetns1" class="demo01.collection.Students">
+        <property name="stuName" value="李华"/>
+        <property name="gender" value="男"/>
+    </bean>
+    <bean id="studetns2" class="demo01.collection.Students">
+        <property name="stuName" value="jack"></property>
+        <property name="gender" value="男"></property>
+    </bean>
+    <bean id="studetns3" class="demo01.collection.Students">
+        <property name="stuName" value="冯七七"/>
+        <property name="gender" value="女"/>
+    </bean>
+
+    <!-- 工厂bean -->
+    <bean id="factoryBeanTest" class="demo01.bean.FactoryBeanTest">
+    </bean>
+
+    <!-- bean的生命周期 -->
+<!--    <bean id="beanOrders" class="demo01.bean.Orders" init-method="initMethod" destroy-method="closeBean">-->
+<!--        <property name="start" value="now"/>-->
+<!--    </bean>-->
+
+    <!-- 添加后置处理器
+         当加载配置文件时，会创建bean和后置处理器，并为所有的bean都添加后置处理器
+         因为后置处理器类实现了BeanPostProcessor接口，spring就会将它作为后置处理器执行
+    -->
+<!--    <bean id="OrdersPost" class="demo01.bean.OrdersPost"/>-->
+
+    <!-- 自动装配
+         使用bean标签的autowire属性配置自动装配，autowire常用的两个属性值：
+         byName: 根据属性名注入，bean的属性名，必须和注入值bean的id相同。
+                 比如Emp有属性名为dept，那么在xml中注册Dept的bean时，必须为dept
+         byType: 根据属性类型注入,根据属性的类型，在xml中找到目标类型自动注入
+                 当同一类型在xml中定义多个时，byType找不到目标类型，会报错
+    -->
+    <bean id="autoWireEmp" class="demo01.autowire.Emp" autowire="byName">
+        <property name="dept" ref="autoWireDept"/>
+    </bean>
+    <bean id="autoWireDept" class="demo01.autowire.Dept"></bean>
+
+</beans>
