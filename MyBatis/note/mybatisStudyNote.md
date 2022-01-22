@@ -1,7 +1,7 @@
 # MyBatis学习笔记
 
 **hibernote框架：** 全自动，要优化sql语句的话得学好HQL
-**MyBatis框架：** 搬自动，将sql的编写提出来交给程序员去编写，不自动化生成。
+**MyBatis框架：** 半自动，将sql的编写提出来交给程序员去编写，不自动化生成。
 
 ---
 
@@ -877,4 +877,30 @@ DepartmentMapper.xml
 ```
 
 
+
+### 2.4.4 延迟加载
+
+&emsp;当一个实体类中存在其他实体类属性，进行查询时就会进行关联查询，或者不查询。关联查询的缺点就是耗费资源。association可以做到**延迟加载**，即当需要查询其他实体属性的内容时，才进行关联查询。
+
+&emsp;在association分步查询的前提上，在mybatis的配置文件配置文件中对以下两个属性进行配置，即可进行延迟加载。
+
+```xml
+        <!-- 延迟加载 -->
+        <!--
+            lazyLoadingEnabled：
+            延迟加载的全局开关。当开启时，所有关联对象都会延迟加载。
+            特定关联关系中可通过设置 fetchType 属性来覆盖该项的开关状态。
+            aggressiveLazyLoading：
+            开启时，任一方法的调用都会加载该对象的所有延迟加载属性。
+            否则，每个延迟加载属性会按需加载
+        -->
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <setting name="aggressiveLazyLoading" value="false"/>
+```
+
+
+
+### 2.4.5
+
+需求：对Department实体类添加属性 ```List<Employee>```。在对部门进行查询时，将部门下的所有员工也查询出来。
 
