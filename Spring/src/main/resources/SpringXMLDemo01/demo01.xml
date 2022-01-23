@@ -129,9 +129,18 @@
          byType: 根据属性类型注入,根据属性的类型，在xml中找到目标类型自动注入
                  当同一类型在xml中定义多个时，byType找不到目标类型，会报错
     -->
-    <bean id="autoWireEmp" class="demo01.autowire.Emp" autowire="byName">
-        <property name="dept" ref="autoWireDept"/>
+    <bean id="autoWireEmp" class="demo01.autowire.Emp" autowire="byName" >
     </bean>
-    <bean id="autoWireDept" class="demo01.autowire.Dept"></bean>
+    <bean id="dept" class="demo01.autowire.Dept">
+        <property name="name" value="技术部"></property>
+    </bean>
+
+<!--    &lt;!&ndash; 手动装配 &ndash;&gt;-->
+<!--    <bean id="autoWireEmp" class="demo01.autowire.Emp">-->
+<!--        <property name="dept" ref="autoWireDept"/>-->
+<!--    </bean>-->
+<!--    <bean id="autoWireDept" class="demo01.autowire.Dept">-->
+<!--        <property name="name" value="财务部"></property>-->
+<!--    </bean>-->
 
 </beans>

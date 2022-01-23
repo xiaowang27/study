@@ -1,5 +1,7 @@
 package bean;
 
+import java.util.List;
+
 /**
  * @Author 王
  * @CreateDate 2022/1/20 15:39 Department
@@ -7,6 +9,7 @@ package bean;
 public class Department {
     private Integer deptId;
     private String deptName;
+    private List<Employee> empList;
 
     public Integer getDeptId() {
         return deptId;
@@ -24,11 +27,20 @@ public class Department {
         this.deptName = deptName;
     }
 
+    public List<Employee> getEmpList() {
+        return empList;
+    }
+
+    public void setEmpList(List<Employee> empList) {
+        this.empList = empList;
+    }
+
     @Override
     public String toString() {
         return "Department{" +
                 "deptId=" + deptId +
                 ", deptName='" + deptName + '\'' +
+                ", empList=" + empList +
                 '}';
     }
 }

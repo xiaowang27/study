@@ -1,7 +1,9 @@
 package utils;
 
+import bean.Department;
 import bean.Employee;
 import dao.AutoEmpSQL;
+import dao.DepartmentDAO;
 import dao.EmployeeMapper;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
@@ -215,5 +217,23 @@ public class MyBatisUtil {
         System.out.println(byEmpIdSelectDeptName);
         System.out.println(byEmpIdSelectDeptName.getDept());
         sqlSession.close();
+    }
+
+    // 关联查询1对多，查部门时，将部门内的员工全部查出来
+    @Test
+    public void getByDeptIdPlus() throws IOException {
+        SqlSession sqlSession = getSqlSessionFactory().openSession();
+        DepartmentDAO mapper = sqlSession.getMapper(DepartmentDAO.class);
+        Department dept = mapper.getByDeptIdPlus(1002);
+        System.out.println(dept);
+    }
+    // 关联查询1对多，先查部门，再差部门内所有员工
+    @Test
+    public void getByDeptIdMax() throws IOException {
+        SqlSession sqlSession = getSqlSessionFactory().openSession();
+        DepartmentDAO mapper = sqlSession.getMapper(DepartmentDAO.class);
+        Department dept = mapper.getByDeptIdMax(1002);
+        System.out.println(dept.getDeptName());
+        System.out.println(dept.getEmpList());
     }
 }

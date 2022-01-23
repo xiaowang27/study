@@ -4,7 +4,49 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="dao.DepartmentDAO">
+
     <select id="getByDeptId" resultType="bean.Department">
         select * from dept where dept_id=#{deptId}
+    </select>
+
+    <!-- 需求：查出部门的同时，查出该部门下的所有员工 -->
+    <select id="getByDeptIdPlus" resultMap="deptAndEmp">
+        select t1.dept_id ,t1.dept_name ,t2.id ,t2.emp_name 
+        from dept t1,emp t2
+        where t1.dept_id = t2.dept_id and t1 .dept_id =#{deptId};
+    </select>
+    
+    <resultMap id="deptAndEmp" type="bean.Department">
+        <id column="dept_id" property="deptId"/>
+        <result column="dept_name" property="deptName"/>
+        <!--
+            collection定义关联集合类型的属性的封装规则
+            ofType指定集合内元素的类型
+        -->
+        <collection property="empList" ofType="bean.Employee">
+            <id column="id" property="id"/>
+            <result column="emp_name" property="empName"/>
+        </collection>
+    </resultMap>
+
+
+    <!-- 在上面的前提下，进行分布查询 -->
+    <select id="getByDeptIdMax" resultMap="associationOneAndMany">
+        select dept_name,dept_id from dept where dept_id = #{deptId}
+    </select>
+
+    <resultMap id="associationOneAndMany" type="bean.Department">
+        <id column="dept_id" property="deptId"/>
+        <result column="dept_name" property="deptName"/>
+        <collection property="empList" ofType="bean.Employee" select="getByEmpId" column="dept_id" fetchType="lazy">
+            <id column="id" property="id"/>
+            <result column="emp_name" property="empName"/>
+            <result column="email" property="email"/>
+        </collection>
+
+    </resultMap>
+
+    <select id="getByEmpId" resultType="bean.Employee">
+        select id,emp_name ,email from emp where dept_id=#{deptId}
     </select>
 </mapper>

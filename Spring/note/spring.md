@@ -129,14 +129,11 @@ class ClassFactory{
 
    2）ClassPathXmlApplicationContext：项目相对路径
 
-## 2.3 IOC操作
 
-* Bean管理
-* 
 
-### 2.3.1 Bean管理
+## 2.3 Bean管理
 
-&emsp;spring中存在两种bean：
+&emsp;**spring中存在两种bean：**
 
 1. BeanFactory(工厂bean)：在配置文件中定义的bean类型可以和返回类型不一样
 2. 普通bean：在配置文件中定义的bean类型就是返回类型
@@ -152,7 +149,9 @@ class ClassFactory{
 
 
 
-### 2.3.2 基于xml的方式管理
+## 2.4 基于xml的方式管理
+
+**示例：**
 
 1. 创建对象
 
@@ -224,7 +223,7 @@ class ClassFactory{
 </property>
 ```
 
-**注入属性-外部bean**
+**注入属性-外部bean** <font color=ff7700>使用ref属性，属性值为外部bean的id值</font>
 
 ```java
 // service实现类
@@ -368,7 +367,7 @@ public class BookDaoImpl implements BookDao {
 
 
 
-### 2.3.3 基于xml注入集合类型属性
+### 2.4.1 基于xml注入集合类型属性
 
 * 注入数组类型
 * 注入List属性
@@ -455,9 +454,16 @@ public class BookDaoImpl implements BookDao {
 
 3. 在测试类中测试
 
+**入集合属性时，有两个问题：**
 
+1. 若集合存储的数据类型是自定义对象时，如何实现注入？
+2. 若在其他bean中也想使用这些数据进行注入，那么只能复制粘贴吗？
 
-### 2.3.4 集合属性两个问题的解决
+### 2.4.2 集合属性两个问题的解决
+
+&emsp;问题1的解决方法：当集合中存储的属性是自定义类型时，现将自定义类型在xml中创建好并进行依赖注入，如何在集合中通过```ref```属性进行引入。
+
+&emsp;问题二的解决方法：修改配置文件的约束，添加一条```util```约束，将注入的属性提取出来变成公共的，都可以使用。在需要使用的地方使用```ref```进行注入。
 
 **1.   集合内存储的类型自定义时**
 
@@ -559,7 +565,7 @@ public class BookDaoImpl implements BookDao {
 
 
 
-### 2.3.5 工厂bean
+### 2.4.3 工厂bean
 
 1. 创建类，该类实现接口FactoryBean，使之成为工厂类
 2. 实现接口中的方法，在getObject()方法中定义返回bean的类型
@@ -587,7 +593,7 @@ public class FactoryBeanTest implements FactoryBean {
 }
 ```
 
-<font color=red>发现另一问题，当注册的是工厂bean，返回的是零一类型是，那如何对返回类型对象进行以来注入呢？</font>
+<font color=red>发现另一问题，当注册的是工厂bean，返回的是另一类型时，那如何对返回类型对象进行以来注入呢？</font>
 
 
 
@@ -618,9 +624,10 @@ public class FactoryBeanTest implements FactoryBean {
 1. 通过构造器创建bean实例
 2. 为bean的属性赋值和对其他bean引用(set方法)
 3. 将bean的实例传递给bean后置处理器的方法postProcessBeforeInitialization()
+3. 调用bean的初始化方法
 4. 将bean的实例传递给bean后置处理器的方法postProcessAfterInitialization()
 5. bean可以被使用
-6. 当容器关闭的时候，抵用bean的销毁方法(需要配置销毁方法)
+6. 当容器关闭的时候，调用bean的销毁方法(需要配置销毁方法)
 
 *不添加后置处理器是不会有第三步和第五步的*
 
@@ -714,7 +721,7 @@ public class OrdersPost implements BeanPostProcessor {
 
 **手动装配：**就是通过bean标签的子标签property对属性值进行手动配置。
 
-**手动装配：**根据指定的装配规则(属性名称或属性类型)，spring自动将匹配的属性值进行注入。
+**手自动装配：**根据指定的装配规则(属性名称或属性类型)，spring自动将匹配的属性值进行注入。
 
 **示例-手动装配**
 
@@ -763,7 +770,14 @@ public class Dept {
     <bean id="autoWireEmp" class="demo01.autowire.Emp">
         <property name="dept" ref="autoWireDept"/>
     </bean>
-    <bean id="autoWireDept" class="demo01.autowire.Dept"></bean>
+    <bean id="autoWireDept" class="demo01.autowire.Dept">
+        <property name="deptName" value="财务部"></property>
+	</bean>
+```
+
+```
+输出
+Emp{dept=Dept{name='财务部'}}
 ```
 
 
@@ -779,10 +793,18 @@ public class Dept {
                  当同一类型在xml中定义多个时，byType找不到目标类型，会报错
     -->
     <bean id="autoWireEmp" class="demo01.autowire.Emp" autowire="byName">
-        <property name="dept" ref="autoWireDept"/>
     </bean>
-    <bean id="autoWireDept" class="demo01.autowire.Dept"></bean>
+    <bean id="dept" class="demo01.autowire.Dept">
+        <property name="name" value="技术部"></property>
+    </bean>
+```
 
+```
+输出
+Emp{dept=Dept{name='技术部'}}
+
+去掉autowire属性后的输出
+Emp{dept=null}
 ```
 
 &emsp;<font color=#DCACCA>在基于xml管理bean中使用```autowire```属性进行自动装配，但是在实际中，都采用注解的方式进行自动装配。</font>

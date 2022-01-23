@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="zn">
+<head>
+    <meta charset="UTF-8">
+    <title>正则表达式</title>
+    <script>
+        
+        var patt = new RegExp("e");  // 表示字符串中，是否包含e
+        alert(patt);    // 输出时/e/
+        
+        // 正则表达式对象的另一种创建方式
+        var patt2 = /3/;
+        
+        // 创建正则表达式对象，判断是否包含字母a或b或c
+        var patt3 = /[abc]/
+        
+        //
+        
+        var str="abcd";
+        alert(patt.test(str));
+        
+    </script>
+</head>
+<body>
+
+</body>
+</html>

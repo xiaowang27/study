@@ -73,7 +73,7 @@ public class Employee {
 ```xml
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE configuration
-        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        PUBLIC "-//mybatis.o·rg//DTD Config 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
     <environments default="development">
@@ -110,7 +110,7 @@ public class MyBatisUtil {
         InputStream inputStream = Resources.getResourceAsStream(resource);
         SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
 
-        // 2. 获取sqlSession实力，能够指向已经映射的sql语句
+        // 2. 获取sqlSession实例，能够指向已经映射的sql语句
         SqlSession sqlSession = sqlSessionFactory.openSession();
 
         // 第一个参数是sql语句的唯一标识符(最好是命名空间+id)，第二个参数是sql语句要执行的参数
@@ -328,7 +328,7 @@ password: 123456
 
 ```xml
     <!--
-        mybatis可以配置多种环境，default指定使用某种黄金，可以达到快速切换环境
+        mybatis可以配置多种环境，default指定使用某种环境，可以达到快速切换环境
         environment：配置一个具体的环境信息，必须有两个标签，id表示当前环境的唯一标识
             transactionManager：事务管理器
                 type：事物管理器的类型。有两种类型：JDBC|MANAGED
@@ -890,9 +890,11 @@ DepartmentMapper.xml
             lazyLoadingEnabled：
             延迟加载的全局开关。当开启时，所有关联对象都会延迟加载。
             特定关联关系中可通过设置 fetchType 属性来覆盖该项的开关状态。
+			默认时开启
             aggressiveLazyLoading：
             开启时，任一方法的调用都会加载该对象的所有延迟加载属性。
             否则，每个延迟加载属性会按需加载
+			默认开启
         -->
         <setting name="lazyLoadingEnabled" value="true"/>
         <setting name="aggressiveLazyLoading" value="false"/>
@@ -900,7 +902,79 @@ DepartmentMapper.xml
 
 
 
-### 2.4.5
+### 2.4.5 一对多关联查询
 
 需求：对Department实体类添加属性 ```List<Employee>```。在对部门进行查询时，将部门下的所有员工也查询出来。
 
+```xml
+    <!-- 需求：查出部门的同时，查出该部门下的所有员工 -->
+    <select id="getByDeptIdPlus" resultMap="deptAndEmp">
+        select t1.dept_id ,t1.dept_name ,t2.id ,t2.emp_name 
+        from dept t1,emp t2
+        where t1.dept_id = t2.dept_id and t1 .dept_id =#{deptId};
+    </select>
+    
+    <resultMap id="deptAndEmp" type="bean.Department">
+        <id column="dept_id" property="deptId"/>
+        <result column="dept_name" property="deptName"/>
+        <!--
+            collection定义关联集合类型的属性的封装规则
+            ofType指定集合内元素的类型
+        -->
+        <collection property="empList" ofType="bean.Employee">
+            <id column="id" property="id"/>
+            <result column="emp_name" property="empName"/>
+        </collection>
+    </resultMap>
+```
+
+
+
+### 2.4.6 一对多分步查询
+
+&emsp;在之前多对一查询时，使用了association标签进行分布查询。步骤如下
+
+1. 定义查询emp的方法
+2. 定义根据emp的字段查询dept的方法
+3. 使用resultMap封装返回值
+4. 使用association标签对其他bean属性进行封装
+5. 使用association标签的```select```属性指定查询dept的sql
+6. 使用association标签的```column```属性，将查询dept所需要的参数传递过去
+
+
+
+&emsp;再一对多的查询中，也可以这样做，之不过不是使用association标签，而是使用collection标签。
+
+```xml
+    <select id="getByDeptIdMax" resultMap="associationOneAndMany">
+        select dept_name,dept_id from dept where dept_id = #{deptId}
+    </select>
+
+    <resultMap id="associationOneAndMany" type="bean.Department">
+        <id column="dept_id" property="deptId"/>
+        <result column="dept_name" property="deptName"/>
+        <collection property="empList" ofType="bean.Employee" select="getByEmpId" column="dept_id" fetchType="lazy">
+            <id column="id" property="id"/>
+            <result column="emp_name" property="empName"/>
+            <result column="email" property="email"/>
+        </collection>
+
+    </resultMap>
+
+    <select id="getByEmpId" resultType="bean.Employee">
+        select id,emp_name ,email from emp where dept_id=#{deptId}
+    </select>
+```
+
+
+
+&emsp;不论是association定义单个属性还是collection定义多个属性，都是使用```column```进行传值。那么<font color=red>需要传递多个值的时候怎么做呢？</font>
+
+&emsp;当需要column传递多个参数时，可以将多列的值封装map再传递，column取值就是```ccolumn={key1=value1,key2=value2}```。其次，即使再mybatis配置文件中开启的全局延迟加载，也可以在局部进行关闭，不用关闭整个配置文件的。那就是使用```fetchType``属性来管理，它的属性值有：
+
+1. lazy：延迟加载
+2. eager：立即加载
+
+
+
+### 2.4.7 resulMap属性
