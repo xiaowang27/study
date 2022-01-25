@@ -8,6 +8,8 @@
       <module fileurl="file://$PROJECT_DIR$/Java核心技术卷一/Java核心技术卷一.iml" filepath="$PROJECT_DIR$/Java核心技术卷一/Java核心技术卷一.iml" />
       <module fileurl="file://$PROJECT_DIR$/MyBatis/MyBatis.iml" filepath="$PROJECT_DIR$/MyBatis/MyBatis.iml" />
       <module fileurl="file://$PROJECT_DIR$/Spring/Spring.iml" filepath="$PROJECT_DIR$/Spring/Spring.iml" />
+      <module fileurl="file://$PROJECT_DIR$/graduate/graduate.iml" filepath="$PROJECT_DIR$/graduate/graduate.iml" />
+      <module fileurl="file://$PROJECT_DIR$/springmvc/springmvc.iml" filepath="$PROJECT_DIR$/springmvc/springmvc.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/study.iml" filepath="$PROJECT_DIR$/.idea/study.iml" />
     </modules>
   </component>

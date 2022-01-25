@@ -2,6 +2,9 @@
 <project version="4">
   <component name="FrameworkDetectionExcludesConfiguration">
     <file type="web" url="file://$PROJECT_DIR$/Ajax" />
+    <file type="web" url="file://$PROJECT_DIR$/graduate" />
+    <file type="web" url="file://$PROJECT_DIR$/springmvc" />
+    <file type="web" url="file://$PROJECT_DIR$/springmvc/springmvcDemo01" />
     <file type="web" url="file://$PROJECT_DIR$/untitled" />
   </component>
   <component name="MavenProjectsManager">
@@ -10,6 +13,9 @@
         <option value="$PROJECT_DIR$/MyBatis/pom.xml" />
         <option value="$PROJECT_DIR$/Ajax/pom.xml" />
         <option value="$PROJECT_DIR$/Spring/pom.xml" />
+        <option value="$PROJECT_DIR$/springmvc/springmvc/pom.xml" />
+        <option value="$PROJECT_DIR$/springmvc/pom.xml" />
+        <option value="$PROJECT_DIR$/graduate/pom.xml" />
       </list>
     </option>
   </component>

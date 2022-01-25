@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.graduate.dao.UserDao">
+    <!--验证用户名是否存在-->
+    <select id="" resultType="Integer">
+        select count(*)
+        from user_info
+        where user_account=#{userAccount}
+    </select>
+    <!--验证账号密码是否输入正确-->
+    <select id="login" resultType="Integer">
+        select count(*)
+        from user_info
+        where user_account=#{userAccount} and user_password=#{userPassword}
+    </select>
+
+    <!--根据用户id查询用户信息-->
+    <select id="getByUserId" resultType="com.example.graduate.entity.UserEntity">
+        select *
+        from user_info
+        where user_id = #{userId}
+  </select>
+    
+</mapper>
