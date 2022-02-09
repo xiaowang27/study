@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Map;
 
 public interface EmployeeMapper {
+
+    // 通过emp_id查询员工
+    public Employee getByEmpId(Integer empId);
     // 查询员工方法
     public Employee getEmpById(Integer id);
 

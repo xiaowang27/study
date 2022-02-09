@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="zn">
+    <head>
+        <meta charset="UTF-8">
+        <title>Dom常用方法</title>
+        <script>
+            /**
+             * 需求：当用户点击了校验按钮，需获取输入框的内容，验证其是否合法
+             * 验证规则：必须由字母、数字、下划线组成，且长度是5到12位
+             */
+            function onclickFun(){
+                // 获取标签对象
+                var inputText = document.getElementById("inputText");
+                // 获取标签内容
+                var textValue = inputText.value;
+                // 正则表达式校验
+                var patt = /^\w{5,12}$/
+
+                /*
+                * test()方法用于测试某个字符串是不是匹配定义的规则
+                * 匹配返回true，否则返回false*/
+                if(patt.test(textValue)){
+                    alert("用户名合法");
+                }else{
+                    alert("用户名不合法");
+                }
+            }
+        </script>
+    </head>
+    <body>
+        用户名：<input type="text" id="inputText">
+        <button onclick="onclickFun()">校验</button>
+
+    </body>
+</html>

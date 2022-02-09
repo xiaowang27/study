@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="zn">
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+        <script src="../js/jquery-3.6.0.js"></script>
+        <script>
+            function btnClick(){
+                // 1. 使用jquery语法获取页面中的dom对象，并将其转为jquery对象
+                var obj = $("#txt");
+
+                // 2. jquery对象是在数组，可以使用[0]或get[0]的方法将jquery对象转为DOM对象
+                var domObj = obj[0];
+
+                // 3. 实现平方，因为需要使用value属性，所以需要转为DOM对象
+                var i = domObj.value;
+                objObj.value=i*i;
+            }
+
+        </script>
+    </head>
+    <body>
+        <div>
+            <input type="button" value="计算平方" onclick="btnClick()">
+            <input type="text" id="txt" placeholder="整数">
+        </div>
+
+    </body>
+</html>

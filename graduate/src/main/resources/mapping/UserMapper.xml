@@ -3,24 +3,74 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.graduate.dao.UserDao">
+
+    <!-- 用户账号功能 start-->
     <!--验证用户名是否存在-->
-    <select id="" resultType="Integer">
+    <select id="getByUserAccount" resultType="Integer">
         select count(*)
         from user_info
         where user_account=#{userAccount}
     </select>
+
     <!--验证账号密码是否输入正确-->
-    <select id="login" resultType="Integer">
+    <select id="findAccountAndPsd" resultType="Integer">
         select count(*)
         from user_info
         where user_account=#{userAccount} and user_password=#{userPassword}
     </select>
 
+    <!-- 查询用户账号的权限级别 -->
+    <select id="login" resultType="Integer">
+        select category
+        from user_info
+        where user_account=#{userAccount} and user_password=#{userPassword}
+    </select>
+
+    <!--通过用户名查找用户信息-->
+    <select id="getByUserName" resultType="com.example.graduate.entity.UserEntity">
+        select user_account,user_name
+        from user_info
+        where user_name=#{userName}
+    </select>
     <!--根据用户id查询用户信息-->
     <select id="getByUserId" resultType="com.example.graduate.entity.UserEntity">
         select *
         from user_info
         where user_id = #{userId}
-  </select>
+    </select>
+    <!-- 用户账号功能 end-->
+
+
+
+    <!-- 站长功能 start -->
+    <!-- 根据用户账号查询账号的权限等级 -->
+    <select id="findAccountLevel" resultType="int">
+        select category
+        from user_info
+        where user_account=#{userAccount}
+    </select>
+    <!-- 设置账号权限 -->
+    <update id="manageUserCategory" >
+        update sht.user_info t1
+        set t1.category = #{category}
+        where t1.user_account = #{userAccount}
+    </update>
+
+    <!-- 管理账号状态 -->
+    <update id="manageUserStatus">
+        update sht.user_info t1
+        set t1.user_status = #{userStatus}
+        where t1.user_account = #{userAccount}
+    </update>
+
+
+    <!-- 查询所有用户 -->
+    <select id="findAddUser" resultType="com.example.graduate.entity.UserEntity">
+        select *
+        from user_info
+        where category=#{cotegory}
+    </select>
+    <!-- 站长功能 end -->
+
     
 </mapper>

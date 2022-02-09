@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zn">
+    <head>
+        <meta charset="UTF-8">
+        <title>用户名验证效果</title>
+        <script>
+
+            var btn = document.getElementById("login");
+
+            var btnFun = function (){
+                var text1 = document.getElementById("userAccount");
+                var span = document.getElementById("userSpan")
+                var patt = /^\w{6,15}$/;
+                if(patt.test(text1.value)){
+                    span.innerHTML="用户名合法"
+                }else{
+                    span.innerHTML="用户名不合法"
+                }
+            }
+
+
+        </script>
+    </head>
+    <body>
+        <table>
+            <tr>
+                <td>
+                    用户名<input type="text" id="userAccount">
+                </td>
+                <td>
+                    <span id="userSpan"></span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="button" id="login" value="登陆" onclick="btnFun()">
+                </td>
+            </tr>
+        </table>
+
+    </body>
+</html>

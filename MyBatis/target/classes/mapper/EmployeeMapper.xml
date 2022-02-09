@@ -9,6 +9,17 @@
     #{id} 从传递来的参数中取出id值
 -->
 <mapper namespace="dao.EmployeeMapper">
+    <!--初次使用mybatis-->
+    <!--根据员工id查询员工
+        id：唯一标识符
+        resultType：查询结果类型
+        #{empId}：传入参数名
+    -->
+    <select id="getByEmpId" resultType="bean.Employee">
+        select *
+        from emp
+        where emp_id=#{empId}
+    </select>
 
     <!-- 查找单个员工 -->
     <select id="getEmpById" resultType="bean.Employee">

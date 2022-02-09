@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="zn">
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+        <script src="../js/jquery-3.6.0.js"></script>
+        <script>
+            $(document).ready(function(){
+                alert("Hello jquery!")
+            })
+
+            /**
+             * 1. $：jquery中的函数名称，document是函数的参数，作用是将document对象变成jquery可以使用的对象。
+             * 2. ready：jquery中的函数。是准备的意思。当页面的dom对象加载成功后，会执行ready函数的内容，相当于js中的onload事件。
+             * 3. function：自定义函数，表示ready后要执行的功能
+             */
+
+            // 上述方法的简写，同时这也是jquery的入口函数
+            $(function(){
+                alert("jquery 方法的入口")
+            })
+        </script>
+    </head>
+    <body>
+
+    </body>
+</html>

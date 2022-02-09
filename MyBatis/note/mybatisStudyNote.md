@@ -13,18 +13,41 @@
 
 ``` sql
 -- 创建员工表
-create table emp(
-id int(11) primary key auto_increment,
-emp_name varchar(255),
-gender char(1),
-email varchar(255)
-)
+-- mybatis_study.emp definition
 
--- 插入数据
-INSERT INTO `mybatis_study`.`emp` (`id`, `emp_name`, `gender`, `email`) VALUES (1, 'jack', '0', 'jack@123.com');
+CREATE TABLE `emp` (
+  `emp_id` int(11) NOT NULL AUTO_INCREMENT,
+  `emp_name` varchar(255) NOT NULL,
+  `gender` varchar(2) DEFAULT NULL,
+  `email` varchar(255) NOT NULL,
+  `dept_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`emp_id`),
+  KEY `fk_emp_dept` (`dept_id`),
+  CONSTRAINT `fk_emp_dept` FOREIGN KEY (`dept_id`) REFERENCES `dept` (`dept_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 ```
 
-2. 创建工程
+2. 添加数据
+
+   ```sql
+   INSERT INTO mybatis_study.emp
+   (emp_id, emp_name, gender, email, dept_id)
+   VALUES(1, '张三', '男', 'zhangsan@123.com', 1001);
+   INSERT INTO mybatis_study.emp
+   (emp_id, emp_name, gender, email, dept_id)
+   VALUES(2, '李四', '男', 'lisi@123.com', 1002);
+   INSERT INTO mybatis_study.emp
+   (emp_id, emp_name, gender, email, dept_id)
+   VALUES(3, '王梅', '女', 'wangmei@123.com', 1002);
+   INSERT INTO mybatis_study.emp
+   (emp_id, emp_name, gender, email, dept_id)
+   VALUES(4, '夏于', '女', 'xiayu@123.com', 1002);
+   ```
+
+   
+
+3. 创建工程
+
 3. 在pom文件中；引入mysql、mybatis、jUnit的依赖
 
 ``` xml
@@ -53,18 +76,18 @@ INSERT INTO `mybatis_study`.`emp` (`id`, `emp_name`, `gender`, `email`) VALUES (
 package bean;
 
 public class Employee {
-    private Integer id;
+    private Integer empId;
     private String empName;
     private String gender;
     private String email;
+    private Integer deptId;
+    private Department dept;
 
-    成员属性的get And set 方法
-    
+    /**一些get&set方法**/
     @Override
-    public String toString() {
-        ... ...
-    }
+    public String toString() {...}
 }
+
 
 ```
 
@@ -99,29 +122,21 @@ public class Employee {
 
 ``` java
 public class MyBatisUtil {
-
-    /**
-     * 1. 根据XML配置文件，创建一个sqlSessionFactory对象
-     * @throws IOException mybatis配置文件路径异常
-     */
-    @Test
-    public void sqlSessionFactory() throws IOException {
+    public static SqlSession getSqlSesion(){
         String resource = "config/mybatis-config.xml";
-        InputStream inputStream = Resources.getResourceAsStream(resource);
-        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
-
-        // 2. 获取sqlSession实例，能够指向已经映射的sql语句
-        SqlSession sqlSession = sqlSessionFactory.openSession();
-
-        // 第一个参数是sql语句的唯一标识符(最好是命名空间+id)，第二个参数是sql语句要执行的参数
-        Employee emp = sqlSession.selectOne("com.study.mybatis.employeeMapper.selectEmpList",1);
-        System.out.println(emp);
-
-        // 3. 释放资源
-        sqlSession.close();
+        SqlSession sqlSession = null;
+        try {
+            InputStream input = Resources.getResourceAsStream(resource);
+            SqlSessionFactory build = new SqlSessionFactoryBuilder().build(input);
+            sqlSession = build.openSession(true);   // 设置true就是默认提交
+            return sqlSession;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            return sqlSession;
+        }
     }
 }
-
 ```
 
 7. 编写mapper映射文件，编写sql语句
@@ -132,29 +147,70 @@ public class MyBatisUtil {
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <!--
-    namespace 名称空间 一般是接口的全限定类名
+    namespace 名称空间
     id 唯一标识
     resultType 返回值类型
     #{id} 从传递来的参数中取出id值
 -->
-<mapper namespace="com.study.mybatis.employeeMapper">
-    <select id="selectEmpList" resultType="bean.Employee">
-        select id,emp_name empName,gender,email from emp where id = #{id}
-    </select>
-    <!-- 当实体类的成员属性与数据表字段名不一致是，就会返回null，解决方法时在sql中为不同名的列名起别名-->
-    <select id="selectEmpList02" resultType="bean.Employee">
-        select * from emp where id = #{id}
+<mapper namespace="dao.EmployeeMapper">
+    <!--初次使用mybatis-->
+    <!--根据员工id查询员工
+        id：唯一标识符
+        resultType：查询结果类型
+        #{empId}：传入参数名
+    -->
+    <select id="getByEmpId" resultType="bean.Employee">
+        select *
+        from emp
+        where emp_id=#{empId}
     </select>
 </mapper>
 ```
 
 8. 将mapper映射文件在mybatis全局配置文件中注册
 
-``` xml
-    <mappers>
-        <mapper resource="mapper/EmployeeMapper.xml"/>
-    </mappers>
-```
+   ```xml
+       <mappers>
+           <mapper resource="mapper/EmployeeMapper.xml"/>
+       </mappers>
+   ```
+
+9. 编写mapper对应的接口(也可以不写接口，直接使用mapper文件)
+
+   ```java
+   public interface EmployeeMapper {
+   
+       // 通过emp_id查询员工
+       public Employee getByEmpId(Integer empId);
+   ```
+
+10. 编写测试方法进行测试
+
+    ```java
+    public class Demo01 {
+        /**初次使用MyBatis**/
+        /*根据员工id查询员工*/
+        @Test
+        public void getByEmpId(){
+            // 通过mybatis工具类获取sqlsession对象
+            SqlSession sqlSession = MyBatisUtil.getSqlSesion();
+            // 通过sqlsession对象获取到mapper文件的接口
+            EmployeeMapper mapper = sqlSession.getMapper(EmployeeMapper.class);
+            // 调用dao接口的方法
+            // Employee emp1 = mapper.getByEmpId(1);
+            // System.out.println(emp1);
+    
+            // 不写接口，直接使用mapper文件
+            Employee emp2 = sqlSession.selectOne("dao.EmployeeMapper.getByEmpId", 2);
+            System.out.println(emp2);
+    
+            // 释放资源
+            sqlSession.close();
+        }
+    }
+    ```
+
+    
 
 ---
 
@@ -163,8 +219,8 @@ public class MyBatisUtil {
 1. 创建接口，编写数据库操作的方法
 
 ``` java
-public interface EmployeeMapper {
-    public Employee getEmpById(Integer id);
+public interface 接口名 {
+    public 返回值类型 方法名(形参类型 形参名 );
 }
 
 ```
@@ -172,7 +228,7 @@ public interface EmployeeMapper {
 2. 将接口和mapper文件绑定。在mapper文件中，将命名空间改为接口的全限定类名
 
 ``` xml
-<mapper namespace="dao.EmployeeMapper">
+<mapper namespace="目标接口全类型类名">
 ```
 
 3. 在测试方法中通过接口获取实现类对象
@@ -193,8 +249,8 @@ public interface EmployeeMapper {
         SqlSession sqlSession = sqlSessionFactory.openSession();
 
         // 3. 获取接口实现类对象
-        EmployeeMapper mapper = sqlSession.getMapper(EmployeeMapper.class);
-        Employee emp = mapper.getEmpById(1);
+        EmployeeMapper mapper = sqlSession.getMapper(接口.class);
+        Employee emp = mapper.接口方法(形参);
         System.out.println(emp);
         sqlSession.close();
     }
@@ -416,6 +472,8 @@ public interface EmpMapper {
 
 &emsp;映射文件指导着mybatis如何进行数据库增删改查。
 
+**mapper文件的常用标签：**
+
 * cache 命名空间的二级缓存设置
 * cache-ref 其他密码空间缓存配置的引用
 * resultMap 自定义结果集映射
@@ -431,92 +489,101 @@ public interface EmpMapper {
 **mapper文件**
 
 ``` xml
- <!-- 增加员工方法 -->
-    <insert id="addEmp" parameterType="bean.Employee">
-        insert into emp (id, emp_name, gender, email)
-        values (#{id}, #{empName}, #{gender}, #{email})
+<!-- 插入员工信息 -->
+    <insert id="insertEmp" >
+        insert into emp(emp_id,emp_name,gender,email,dept_id)
+        values(#{empId},#{empName},#{gender},#{email},#{deptId})
     </insert>
 
-    <!-- 更新员工方法 -->
+    <!-- 删除员工信息 -->
+    <delete id="deleteEmp">
+        delete from emp
+        where emp_id=#{empId}
+    </delete>
+
+    <!-- 修改员工信息 -->
     <update id="updateEmp">
         update emp
-        set id=#{id},emp_name=#{empName},gender=#{gender},email=#{email}
-        where id=#{id}
+        set emp_name=#{empName},gender=#{gender},email=#{email},dept_id=#{deptId}
     </update>
-
-    <!-- 删除员工方法 -->
-    <delete id="deleteEmp">
-        delete from emp where id=#{id}
-    </delete>
 ```
 
 **dao接口**
 
 ``` java
-    // 增加员工方法
-    public Integer addEmp(Employee employee);
+    /*插入员工信息*/
+    int insertEmp(Employee emp);
 
-    // 更新员工信息方法
-    public Integer updateEmp(Employee employee);
+    /*删除员工信息*/
+    int deleteEmp(Employee emp);
 
-    // 删除员工方法
-    public Boolean deleteEmp(Employee employee);
-
+    /*修改员工信息*/
+    int updateEmp(Employee empl);
 ```
 
 **测试方法**
 
 ``` java
-   @Test
-    public void crudTest() throws IOException {
-        // 1. 获取SqlSessionFactory对象
-        SqlSessionFactory sqlSessionFactory = getSqlSessionFactory();
+    @Test
+    public void insertEmp(){
+        SqlSession sqlSesion = MyBatisUtil.getSqlSesion();
+        Demo02Dao mapper = sqlSesion.getMapper(dao.Demo02Dao.class);
 
-        // 2. 获取SqlSession对象    无参方法不会自动提交数据
-        SqlSession sqlSession = sqlSessionFactory.openSession();
-
-        // 3. 获取接口实现类对象
-        EmployeeMapper mapper = sqlSession.getMapper(EmployeeMapper.class);
-
-        // 前提准备，创建一个emp对象
         Employee employee = new Employee();
-        employee.setId(220113);
-        employee.setEmpName("张三");
+        employee.setEmpName("雪落");
+        employee.setGender("女");
+        employee.setEmail("xueluo@123.com");
+        employee.setDeptId(1002);
+
+        int i = mapper.insertEmp(employee);
+        if(i==1){
+            System.out.println("插入成功");
+        }else{
+            System.out.println("插入失败");
+        }
+        sqlSesion.close();
+    }
+
+    /*修改员工信息*/
+    @Test
+    public void updateEmp(){
+        SqlSession sqlSesion = MyBatisUtil.getSqlSesion();
+        Demo02Dao mapper = sqlSesion.getMapper(Demo02Dao.class);
+
+        Employee employee = new Employee();
+        employee.setEmpId(5);
+        employee.setEmpName("李淳刚");
         employee.setGender("男");
-        employee.setEmail("zhangsan@123.com");
+        employee.setEmail("licg@123.com");
+        employee.setDeptId(1001);
 
-        // 4. 执行crud
-        // addEmp(mapper, employee);
-        // employee.setGender("女");
-        // updateEmp(mapper,employee);
-        // deleteEmp(mapper,employee);
-        getEmpList(mapper,employee);
-
-        // 提交
-        sqlSession.commit();
-    }
-    top
-    // 添加员工
-    public void addEmp(EmployeeMapper employeeMapper, Employee employee) {
-        System.out.println("添加员工");
-        employeeMapper.addEmp(employee);
-    }
-
-    // 删除员工
-    public void deleteEmp(EmployeeMapper employeeMapper, Employee employee) {
-        System.out.println("删除员工");
-        employeeMapper.deleteEmp(employee);
-    }
-
-    // 修改信息
-    public void updateEmp(EmployeeMapper employeeMapper, Employee employee) {
-        System.out.println("修改信息");
-        Integer integer = employeeMapper.updateEmp(employee);
-        if(integer==1){
+        int i = mapper.updateEmp(employee);
+        if(i==1){
             System.out.println("修改成功");
         }else{
             System.out.println("修改失败");
         }
+
+        sqlSesion.close();
+    }
+
+    /*删除员工信息*/
+    @Test
+    public void deleteEmp(){
+        SqlSession sqlSesion = MyBatisUtil.getSqlSesion();
+        Demo02Dao mapper = sqlSesion.getMapper(Demo02Dao.class);
+
+        Employee employee = new Employee();
+        employee.setEmpId(5);
+
+        int i = mapper.deleteEmp(employee);
+        if(i==1){
+            System.out.println("删除成功");
+        }else{
+            System.out.println("删除失败");
+        }
+
+        sqlSesion.close();
     }
 ```
 
@@ -543,7 +610,10 @@ SqlSession sqlSession = sqlSessionFactory.openSession(true);
 ```
 
 
+
 ## 2.2 参数处理
+
+&emsp;在使用mybatis进行增删改后，有个疑问：那就是方法中传递给dao接口方法的参数，mapper文件是如何进行读取的呢？
 
 ### 2.2.1 单个参数
 
@@ -559,49 +629,64 @@ SqlSession sqlSession = sqlSessionFactory.openSession(true);
 
 ### 2.2.2 多个参数
 
-多个参数mybatis会做特殊处理，多个参数会被封转成一个map，#{}就是从map中获取指定的key值。以下面为例
+&emsp;多个参数mybatis会做特殊处理，多个参数会被封转成一个map，#{}就是从map中获取指定的key值。多个参数处理有两种方法：
+
+1. 在mapper1文件中使用#{param1}去读取参数
+2. 在dao接口的方法使用```@param("mapper文件读取的参数名")```对参数注解
+
+以下面为例子，就会报错
+
+```java
+List<Employee> manyParam(String gender, Integer deptId);
+```
 
 ``` xml
-    <!-- mybatis多个参数处理 -->
-    <select id="mybatisParas" resultType="bean.Employee">
-        select * from emp where id=#{id} and emp_name=#{empName}
+    <!--多个参数-->
+    <!--
+        由员工性别和部门id查找员工信息
+    -->
+    <select id="manyParam" resultType="bean.Employee">
+        select *
+        from emp
+        where gender=#{gender} and dept_id=#{deptId}
     </select>
 ```
 
 ``` java
-    // mybatis参数处理之多个参数
+    // 多个参数
     @Test
-    public void mybatisParas() throws IOException {
-        SqlSession sqlSession = getSqlSessionFactory().openSession();
-        EmployeeMapper mapper = sqlSession.getMapper(EmployeeMapper.class);
-        Employee jack = mapper.mybatisParas(1, "jack");
-        System.out.println(jack);
+    public void manyParam(){
+        SqlSession sqlSesion = MyBatisUtil.getSqlSesion();
+        Demo02Dao mapper = sqlSesion.getMapper(Demo02Dao.class);
+        List<Employee> emps = mapper.manyParam("男", 1001);
+        for(Employee e : emps){
+            System.out.println(e);
+        }
     }
-    
-    /*
-      报错：
-      Cause: org.apache.ibatis.binding.BindingException: Parameter 'id' not found. Available parameters are [arg1, arg0, param1, param2]
-    */
 ```
 
 &emsp;map是[param1:value1,param2:value2...]，所以多个参数取值的话可以使用#{param1}...或[索引]。
-更改xml文件的取值如下，就不会报错了
+
+&emsp;xml文件取值方式是```#{param1}、#{param2}...```，如下
 
 ``` xml
-    <!-- mybatis多个参数处理 -->
-    <select id="mybatisParas" resultType="bean.Employee">
-        select * from emp where id=#{param1} and emp_name=#{param2}
+    <select id="manyParam" resultType="bean.Employee">
+        select *
+        from emp
+        where gender=#{param1} and dept_id=#{param2}
     </select>
 ```
 
-&emsp;采用param1、param2...这种方法不够直观看出参数，所以可以使用<font color=#ff700>命名参数</font>的方法，使用方法如下：
+&emsp;使用<font color=#ff700>命名参数</font>的方法，使用方法如下：
 
 ``` java
 // dao接口的方法
-public Employee mybatisParas(@Param("id") int id, @Param("empName") String empName);
+List<Employee> manyParam(@Param("gender") String gender, @Param("deptId") Integer deptId);
 ```
 
-&emsp;命名参数：明确指定封装参数时map的key，使用注解@Param("参数名""),多个参数会被封装成一个map```````````````````````````````````
+&emsp;命名参数：明确指定封装参数时map的key，使用注解@Param("参数名""),多个参数会被封装成一个map
+
+
 
 ### 2.2.3 参数为POJO
 
@@ -612,20 +697,34 @@ public Employee mybatisParas(@Param("id") int id, @Param("empName") String empNa
 &emsp;如果多个参数不是POJO，那么也可以传入map，使用#{key}取出对应的值。
 
 ``` xml
-<select id="getEmpByMap" resultType="Employee">
-    select * from emp where id=#{id} and emp_name=#{empName}
-</select>
+    <!--参数类型为Map-->
+    <select id="paramCategoryIsMap" resultType="bean.Employee">
+        select *
+        from emp
+        where gender=#{gender} and dept_id=#{deptId}
+    </select>
 ```
 
 ``` java
-Employee getMepByMap(Map<String,Object>map);
+    List<Employee> paramCategoryIsMap(Map<String,Object> map);
 ```
 
 ``` java
-Map<String,Object> map = new HashMap<>();
-map.put("id",220112);
-map.put("empName","张三");
-mapper.getEmpByMap
+    @Test
+    public void paramCategoryIsMap(){
+        SqlSession sqlSesion = MyBatisUtil.getSqlSesion();
+        Demo02Dao mapper = sqlSesion.getMapper(Demo02Dao.class);
+
+        Map<String,Object> map = new HashMap<>();
+        map.put("gender","女");
+        map.put("deptId","1002");
+
+        List<Employee> emps = mapper.paramCategoryIsMap(map);
+
+        for (Employee e : emps){
+            System.out.println(e);
+        }
+    }
 ```
 
 &emsp;如果多个参数不是实体类属性，如果不是经常使用，可以选择传Map。但是如果经常使用，推荐编写一个TO(Transfer Object)数据传输对象。
@@ -638,23 +737,29 @@ mapper.getEmpByMap
 
 ### 2.2.6 #和$取值的区别
 
-&emsp;${}：是以预编译的形式，将参数设置到sql语句中；PreparedStatement；可以防止sql注入
+**两种取值方式的区别：***
+
+&emsp;${}：是以预编译的形式，将参数设置到sql语句中；PreparedStatement；可以防止sql注入。在使用${}，时，若参数时中文的，需要加上单引号，不然会报错。示例：```'${gender}'```
 
 &emsp;#{}：取出的值直接拼装在sql语句中，会有安全问题
 
 &emsp;mapper文件中的sql语句
 
 ```xml
-    <select id="getEmpByMap" resultType="bean.Employee">
-    select * from emp where id=#{id} and emp_name=${empName}
-</select>
+    <select id="paramCategoryIsMap" resultType="bean.Employee">
+        select *
+        from emp
+        where gender='${gender}' and dept_id=#{deptId}
+    </select>
 ```
 
 &emsp;mybatis转换后的sql语句
 
 ```sql
-select * from emp where id=? and emp_name=张三
+select * from emp where gender='女' and dept_id=? 
 ```
+
+**两种取值方法分别对应的情景：**
 
 &emsp;在大多数情况下，取值都应该去使用#{}。在分库分表的情况下(原生jdbc不支持占位符的地方)，，就可以使用${}进行取值，比如取不同年份的工资表数据：
 
@@ -668,7 +773,7 @@ select * from ${year}_salary where xxx;
 select * from tb1_emp order_by ${f_name} ${order}
 ```
 
-&emsp;**#{}**更丰富的用法：
+&emsp;**#{}更丰富的用法：**
 
 &emsp;&emsp;规定参数的一些规则：
 
@@ -684,39 +789,88 @@ select * from emp where id=#{id} and emp_name=#{empName JdbcType=OTHER}
 JdbcTypeForNull=NULL
 ```
 
+
+
 ## 2.3 查询语句——select元素
 
-### 2.3.1 返回值类型为集合
+* 返回值为Java基本类型
+* 返回值为String类型
+* 返回值为collection结婚类型
+* 返回值为map类型
 
-&emsp;当dao接口方法的返回值是集合时，mapper文件中select元素的resultType属性的值应该是集合内的元素的类型。例如：
+### 2.3.1 返回值类型为Java基本类型
 
-```java
-    List<Employee> getEmpByLastnameLike();
-```
+&emsp;mybatis做了类型转换，为包装类的首字母小写，如Integer就是integer。
 
 ```xml
-    <select id="getEmpByLastNameLike" resultType="bean.Employee">
-        select * from emp;
+    <select id="getByEmpDeptId" resultType="integer">
+        select dept_id
+        from emp
+        where emp_id=#{empId}
     </select>
 ```
 
-### 2.3.2 返回值类型为Map
+
+
+### 2.3.2 返回值类型为String
+
+&emsp;和基本类型一样。
+
+```xml
+    <select id="getByEmpName" resultType="string">
+        select emp_name
+        from emp
+        where emp_id=#{empId}
+    </select>
+```
+
+
+
+### 2.3.3 返回值类型为集合
+
+&emsp;当dao接口方法的返回值是集合时，mapper文件中select元素的resultType属性的值应该是集合内的元素的类型。例如：
+
+```xml
+    <select id="getByEmpList" resultType="bean.Employee">
+        select *
+        from emp
+    </select>
+```
+
+### 2.3.4 返回值类型为Map
 
 &emsp;返回一条记录的map，Key就是列名，值就是对应的值
 
 ```xml
-    <select id="getEmpByLastNameMap" resultType="map">
-        select * from emp where id=#{param1}
+    <select id="getByEmpMap" resultType="map">
+        select emp_name
+        from emp
+        where emp_id=#{empId}
     </select>
 ```
 
 ```java
-Map<String,Object> getEmpByLastNameMap(Integer id);
+    @Test
+    public void getByEmpMap(){
+        SqlSession sqlSesion = MyBatisUtil.getSqlSesion();
+        Demo02Dao mapper = sqlSesion.getMapper(Demo02Dao.class);
+
+        Map<String, Object> byEmpMap = mapper.getByEmpMap(2);
+        System.out.println("key值"+byEmpMap.keySet());   // key就是字段名
+        System.out.println("value值"+byEmpMap.values()); // value就是字段值
+        sqlSesion.close();
+    }
+/*输出：
+	key值[emp_name]
+	value值[李四]
+*/
 ```
 
 &emsp;查询多条记录，并将其封装成一个Map：Map<Integer,Employee>，键是这条记录的主键，值是封装后的javabean对象
 
-### 2.3.3 resultMap属性
+
+
+## 2.4 resultMap
 
 &emsp;resultMap用于自定义某个javaBean的封装规则，type表示自定义的Java类型，id是唯一的，方便引用。示例如下
 
@@ -740,7 +894,7 @@ Map<String,Object> getEmpByLastNameMap(Integer id);
     </select>
 ```
 
-## 2..4 关联查询
+
 
 ### 2.4.1 级联属性封装结果
 
@@ -878,7 +1032,7 @@ DepartmentMapper.xml
 
 
 
-### 2.4.4 延迟加载
+### 2.4.4 association延迟加载
 
 &emsp;当一个实体类中存在其他实体类属性，进行查询时就会进行关联查询，或者不查询。关联查询的缺点就是耗费资源。association可以做到**延迟加载**，即当需要查询其他实体属性的内容时，才进行关联查询。
 
@@ -902,7 +1056,7 @@ DepartmentMapper.xml
 
 
 
-### 2.4.5 一对多关联查询
+### 2.4.5 collection关联查询
 
 需求：对Department实体类添加属性 ```List<Employee>```。在对部门进行查询时，将部门下的所有员工也查询出来。
 
@@ -930,7 +1084,7 @@ DepartmentMapper.xml
 
 
 
-### 2.4.6 一对多分步查询
+### 2.4.6 collection分步查询&延迟加载
 
 &emsp;在之前多对一查询时，使用了association标签进行分布查询。步骤如下
 
@@ -977,4 +1131,15 @@ DepartmentMapper.xml
 
 
 
-### 2.4.7 resulMap属性
+### 2.4.7 discriminator鉴别器
+
+&emsp;discriminator(鉴别器)可以判断根据某列的不同值，去选择不同的封装行为。
+
+**示例：** 查询部门表，当部门人数大于2时，查出部门下所有员工，部门人数小于2时，查出部门下员工的人数。
+
+
+
+
+
+## 2.5 动态SQL
+

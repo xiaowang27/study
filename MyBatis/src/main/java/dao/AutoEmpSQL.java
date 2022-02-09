@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface AutoEmpSQL {
     @Select("select * from emp")
-    public List<Employee> queryEmpList();
+    List<Employee> queryEmpList();
 }

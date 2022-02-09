@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.Demo01Dao">
+    <!--初次使用mybatis-->
+    <!--根据员工id查询员工
+        id：唯一标识符
+        resultType：查询结果类型
+        #{empId}：传入参数名
+    -->
+    <select id="getByEmpId" resultType="bean.Employee">
+        select *
+        from emp
+        where emp_id=#{empId}
+    </select>
+
+    <!-- 查找单个员工 -->
+    <select id="getEmpById" resultType="bean.Employee">
+        select *
+        from emp
+        where id = #{id}
+    </select>
+</mapper>

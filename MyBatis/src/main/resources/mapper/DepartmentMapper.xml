@@ -30,7 +30,7 @@
     </resultMap>
 
 
-    <!-- 在上面的前提下，进行分布查询 -->
+    <!-- 在上面的前提下，进行分步查询 -->
     <select id="getByDeptIdMax" resultMap="associationOneAndMany">
         select dept_name,dept_id from dept where dept_id = #{deptId}
     </select>
@@ -49,4 +49,28 @@
     <select id="getByEmpId" resultType="bean.Employee">
         select id,emp_name ,email from emp where dept_id=#{deptId}
     </select>
+
+    <!--discriminator-->
+    <!--查询部门表，当部门为开发部时，查出部门下所有员工，部门为测试部时就不查-->
+    <select id="discriminatorTest" resultMap="discriminator">
+        select *
+        from dept
+    </select>
+    <resultMap id="discriminator" type="bean.Department">
+        <id column="id" property="deptId"/>
+        <!--
+            column：对应的列值，这里就是部门名称
+            javaType：列值对应的Java类型，这里就是String
+        -->
+        <discriminator javaType="Integer" column="id">
+            <case value="1001" resultType="bean.Employee">
+                <collection property="deptId" ofType="bean.Employee" select="getByEmpId" column="dept_id">
+                    <id column="id" property="id"/>
+                    <result column="emp_name" property="empName"/>
+                    <result column="email" property="email"/>
+                </collection>
+            </case>
+        </discriminator>
+    </resultMap>
+
 </mapper>

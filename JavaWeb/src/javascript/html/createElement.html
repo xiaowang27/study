@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="zn">
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+        <script>
+            window.onload=function (){
+                // 使用js创建html标签
+                var div = document.createElement("div");    // 在内存中<div></div>
+                div.innerHTML="我被创建了...";   // 标签内容已被创建，但还在内存中
+
+                // 需要将创建的div标签添加到body下,添加子元素
+                document.body.appendChild(div)
+
+                // 创建文本节点
+                var text = document.createTextNode("这是文本节点的创建，还有属性节点");
+                div.appendChild(text)
+
+                var attr = document.createAttribute("font-color:red");
+                div.appendChild(attr)
+            }
+
+
+        </script>
+    </head>
+    <body>
+
+    </body>
+</html>

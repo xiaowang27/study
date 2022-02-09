@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zn">
+    <head>
+        <meta charset="UTF-8">
+        <title>正则表达式测试</title>
+        <script>
+            /**
+             * 正则表达式的创建方式：
+             * 1. var patt = new RegExp("e");
+             * 2. var patt = /e/
+             *
+             * 常用表达式：
+             * 1. [abc]查找括号之间的任何字符
+             * 2. [^abc]查找不在括号之间的字符
+             * 3. [0-9]查找任何0-9之间的数字
+             * 4. [a-z]查找小写a-z之间的字符
+             * 5. [A-Z]查找大写A-Z之间的字符
+             * 6. ()
+             */
+
+            /**
+             * 元字符
+             * 1. \w 表示要求字符串包含字母、数字、下划线中任意
+             * 2. \W 表示要求字符串不包含字母、数字、下划线
+             * 3. \d 表示包含数字
+             * 4. \D 表示不包含数字
+             * 5. \s 表示包含空白字符
+             * 6. \S 表示不包含空白字符
+             * ... ...
+             */
+
+            /**
+             * 量词：
+             * n+：至少有一个n
+             * n*：有0个或多个n
+             * n?：有0个或1个n
+             * n{X}：表示包含X个n
+             * n{X,Y}：表示包含X-Y个n
+             * n$：表示要以n字符结尾
+             * ^n：表示要以n开头
+             */
+
+                // 获取对象
+            var text1 = document.getElementById("text1");
+            var text2 = document.getElementById("text2");
+            var text3 = document.getElementById("text3");
+            var text4 = document.getElementById("text4");
+
+            var btn1 = document.getElementById("btn1s");
+            var btn2 = document.getElementById("btn2");
+            var btn3 = document.getElementById("btn3");
+            var btn4 = document.getElementById("btn4");
+
+            var result1 = document.getElementById("result1");
+            var result2 = document.getElementById("result2");
+            var result3 = document.getElementById("result3");
+            var result4 = document.getElementById("result4");
+
+            // 2. 定义条件
+            var patt1 = /[a-z]/;
+            var patt2 = /[0-9]/;
+            var patt2 = /[a-z]&[0-9]/;
+            var patt2 = /[a-z]&[0-9]/;
+
+            // 3. 定义方法
+
+
+            var btnFun1 = function (){
+                result1.innerHTML=text1.value;
+            }
+
+
+        </script>
+    </head>
+    <body>
+        <table 1align="center" border="_self">
+            <tr>
+                <th>条件</th>
+                <th>输入</th>
+                <th>确认</th>
+                <th>结果</th>
+            </tr>
+            <tr>
+                <td>a-z之间任意字符</td>
+                <td>
+                    <input type="text" id="text1">
+                </td>
+                <td>
+                    <input type="button" id="btn1" value="验证" onclick="btnFun1()">
+                </td>
+                <td id="result1"></td>
+            </tr>
+            <tr>
+                <td>1-9之间任意数字</td>
+                <td>
+                    <input type="text" id="text2">
+                </td>
+                <td>
+                    <input type="button" id="btn2" value="验证">
+                </td>
+                <td id="result2"></td>
+            </tr>
+            <tr>
+                <td>1-9之间任意数字,a-z之间任意字符</td>
+                <td>
+                    <input type="text" id="text3">
+                </td>
+                <td>
+                    <input type="button" id="btn3" value="验证">
+                </td>
+                <td id="result3"></td>
+            </tr>
+            <tr>
+                <td>至少包含8个数字，4个字符</td>
+                <td>
+                    <input type="text" id="text4">
+                </td>
+                <td>
+                    <input type="button" id="btn4" value="验证">
+                </td>
+                <td id="result4"></td>
+            </tr>
+            <tr>
+                <td>1-9之间任意数字</td>
+                <td>
+                    <input type="text" id="text5">
+                </td>
+                <td>
+                    <input type="button" id="btn5" value="验证">
+                </td>
+                <td id="result5"></td>
+            </tr>
+        </table>
+
+    </body>
+</html>

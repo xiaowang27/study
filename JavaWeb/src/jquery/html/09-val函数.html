@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zn">
+    <head>
+        <meta charset="UTF-8">
+        <title>val函数</title>
+        <script src="../js/jquery-3.6.0.js"></script>
+        <script>
+            // 1. 使用jquery选择器选择目标dom对象
+            var $btn1 = $("#btn1");
+            var $btn2 = $("#btn2");
+            var $p = $("p");
+
+            // 2. 绑定事件
+            $btn1.click(fun1());
+            $btn2.click(fun2());
+
+            // 3. 定义事件
+            function fun1(){
+                var val = $p.val();
+                alert(val)
+            }
+            function fun2(){
+                var val = $p.val("hello world");
+            }
+
+
+
+        </script>
+    </head>
+    <body>
+
+        <p>第1个p</p>
+        <p>第2个p</p>
+        <p>第3个p</p>
+        <p>第4个p</p>
+        <p>第5个p</p>
+
+        <button id="btn1">显示第一个p标签内的内容</button><br>
+        <button id="btn2">对所有p标签内容赋值</button><br>
+    </body>
+</html>

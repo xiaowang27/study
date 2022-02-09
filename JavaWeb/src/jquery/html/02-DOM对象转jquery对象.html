@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="zn">
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+        <script src="../js/jquery-3.6.0.js"></script>
+        <script>
+            function btnClick(){
+                // 1. 使用js的方法获取到DOM对象
+                var domBtn = document.getElementById("btn");
+                // 2. 使用jquery函数$()将DOM对象转为jquery对象
+                var $btn=$(domBtn);
+                // 3. 调用jquery方法val()，获取jquery对象内容(value)
+                alert("2="+$btn.val())
+            }
+        </script>
+    </head>
+    <body>
+        <div>
+            <input type="button" id="btn" value="我要成为jquery对象" onclick="btnClick()"/>
+        </div>
+
+    </body>
+</html>

@@ -4,21 +4,94 @@
     <meta charset="UTF-8">
     <title>正则表达式</title>
     <script>
-        
-        var patt = new RegExp("e");  // 表示字符串中，是否包含e
-        alert(patt);    // 输出时/e/
-        
-        // 正则表达式对象的另一种创建方式
-        var patt2 = /3/;
-        
-        // 创建正则表达式对象，判断是否包含字母a或b或c
-        var patt3 = /[abc]/
-        
-        //
-        
-        var str="abcd";
-        alert(patt.test(str));
-        
+        /**
+         * RegExp是正则表达式的缩写
+         * RegExp对象用于规定在文本中检索的内容
+         */
+
+        /**
+         * 正则表达式的创建方式：
+         * 1. var patt = new RegExp("e");
+         * 2. var patt = /e/
+         *
+         * 常用表达式：
+         * 1. [abc]查找括号之间的任何字符
+         * 2. [^abc]查找不在括号之间的字符
+         * 3. [0-9]查找任何0-9之间的数字
+         * 4. [a-z]查找小写a-z之间的字符
+         * 5. [A-Z]查找大写A-Z之间的字符
+         * 6. ()
+         */
+
+        // 要求字符串中有a-z任何一个字符
+        var patt = /[a-z]/
+        var str = "AAaaccdd";
+        var b = patt.test(str);
+        if(b){
+            alert("字符串"+str+"包括a-z中任何一个字符");
+        }else{
+            alert("字符串"+str+"不包括a-z中任何一个字符");
+        }
+
+        // 要求不包含a-z任何一个字符
+        var patt2 = /[^a-z]/;
+        var str2= "12345";
+        var b2 = patt2.test(str2);
+        if(b2){
+            alert("字符包"+str2+"不包括a-z中任何一个字符");
+        }else{
+            alert("字符串"+str2+"包括a-z中任何一个字符");
+        }
+        /**
+         * 元字符
+         * 1. \w 表示要求字符串包含字母、数字、下划线中任意
+         * 2. \W 表示要求字符串不包含字母、数字、下划线
+         * 3. \d 表示包含数字
+         * 4. \D 表示不包含数字
+         * 5. \s 表示包含空白字符
+         * 6. \S 表示不包含空白字符
+         * ... ...
+         */
+
+        var patt3 = /\w/
+        var str3 = "123_a";
+        var b3 = patt3.test(str3);
+        if(b3){
+            alert("字符包"+str3+"包括A-Z、a-z、1-9、下划线三类中的任何一个字符");
+        }else{
+            alert("字符包"+str3+"不包括a-z、1-9、下划线三类中的任何一个字符");
+        }
+
+        /**
+         * 量词：
+         * n+：至少有一个n
+         * n*：有0个或多个n
+         * n?：有0个或1个n
+         * n{X}：表示包含X个n
+         * n{X,Y}：表示包含X-Y个n
+         * n$：表示要以n字符结尾
+         * ^n：表示要以n开头
+         */
+
+        // a+:表示至少包含一个a
+        var patt4 = /a+/;
+        var str4 = "bcd";
+        var b4 = patt4.test(str4);
+        if(b4){
+            alert("字符包"+str4+"至少有一个a");
+        }else{
+            alert("字符包"+str4+"一个a都没有");
+        }
+
+        // a*:表示包含0或多个a
+        var patt5 = /a*/;
+        var str5 = "bcd";
+        var b5 = patt5.test(str4);
+        if(b5){
+            alert("字符包"+str5+"有0个或多个a");
+        }else{
+            alert("字符包"+str5+"一个a都没有");
+        }
     </script>
 </head>
 <body>

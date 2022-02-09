@@ -1,19 +1,19 @@
 package bean;
 
 public class Employee {
-    private Integer id;
+    private Integer empId;
     private String empName;
     private String gender;
     private String email;
     private Integer deptId;
     private Department dept;
 
-    public Integer getId() {
-        return id;
+    public Integer getEmpId() {
+        return empId;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setEmpId(Integer empId) {
+        this.empId = empId;
     }
 
     public String getEmpName() {
@@ -40,6 +40,14 @@ public class Employee {
         this.email = email;
     }
 
+    public Integer getDeptId() {
+        return deptId;
+    }
+
+    public void setDeptId(Integer deptId) {
+        this.deptId = deptId;
+    }
+
     public Department getDept() {
         return dept;
     }
@@ -51,7 +59,7 @@ public class Employee {
     @Override
     public String toString() {
         return "Employee{" +
-                "id=" + id +
+                "empId=" + empId +
                 ", empName='" + empName + '\'' +
                 ", gender='" + gender + '\'' +
                 ", email='" + email + '\'' +

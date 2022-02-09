@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zn">
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+        <script src="../js/jquery-3.6.0.js"></script>
+        <script>
+            /**
+             * $("选择器:first")    // first表示取出数组中第一个成员
+             * $("选择器:last")    // last表示取出数组中最后一个成员
+             * $("选择器:eq(数组索引)")    // 根据索引取出数组中对应索引的成员
+             * $("选择器:lt(数组索引)")    // 取出数组中小于给定索引的全部成员
+             * $("选择器:gt(数组索引)")    // 取出数组中大于给定索引的全部成员
+             */
+
+            // 1. jQuery入口函数
+            $(function () {
+                // 2. 为按钮绑定事件
+                $("#btn1").click(fun1)
+                $("#btn2").click(fun2)
+                $("#btn3").click(fun3)
+                $("#btn4").click(fun4)
+                $("#btn5").click(fun5)
+                $("#btn6").click(fun6)
+
+                // 3.定义方法
+                function fun1() {
+                    // 4. 定义过滤器
+                    $("div:first").css("background-color", "#6495ED")
+                }
+
+                function fun2() {
+                    $("div:last").css("background-color", "#9370DB")
+                }
+
+                function fun3() {
+                    $("div:eq(3)").css("background-color", "#90EE90")
+                }
+
+                function fun4() {
+                    $("div:lt(3)").css("background-color", "#FFD700")
+                }
+
+                function fun5() {
+                    $("div:gt(3)").css("background-color", "#FF4500")
+                }
+
+                function fun6() {
+                    $("div").css("background-color", "#FF7700")
+                }
+            })
+
+        </script>
+        <style>
+            div {
+                background-color: #FF7700;
+            }
+        </style>
+    </head>
+    <body>
+        <P>以下均已索引表示</P>
+        <div id="zero">第0个div</div>
+        <div id="one">第1个div</div>
+
+        <div>
+            第2个div
+            <div class="son">
+                第3个div
+            </div>
+            <div class="son">
+                第4个div
+            </div>
+        </div>
+
+        <div>
+            第5个div
+        </div>
+
+        <span>
+            我是span
+        </span>
+        <hr>
+
+        <p>功能按钮</p>
+        <input type="button" id="btn1" value="选择第一个div"><br>
+        <input type="button" id="btn2" value="选择最后一个div"><br>
+        <input type="button" id="btn3" value="选择索引为3的div"><br>
+        <input type="button" id="btn4" value="选择索引大于3的div"><br>
+        <input type="button" id="btn5" value="选择索引小于3的div"><br>
+        <input type="button" id="btn6" value="还原最开始的样子"><br>
+
+    </body>
+</html>

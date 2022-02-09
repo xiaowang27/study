@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zn">
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+        <style>
+            div{
+                background-color: #FF7700;
+                width: 200px;
+                height: 100px;
+            }
+        </style>
+
+        <script src="../js/jquery-3.6.0.js"></script>
+        <script>
+            function fun1(){
+                let $div = $("#oneDiv");
+                $div.css("background","#43CD80")
+
+            }
+
+            function fun2(){
+                let $div = $(".twoDiv");
+                $div.css("background","#6A5ACD")
+
+            }
+
+            function fun3(){
+                let $div = $("div");
+                // jquery的对象是一个数字，jquery操作会操作数组中的所有成员
+                $div.css("background","#FF6A6A")
+            }
+
+            function fun4(){
+                let $div = $("*");
+                $div.css("background","#FF3030")
+            }
+
+            function fun5(){
+                let $div = $("#oneDiv,.twoDiv");
+                $div.css("background","#9A32CD")
+            }
+        </script>
+    </head>
+    <body>
+        <div id="oneDiv">id的div</div>
+        <br>
+        <div class="twoDiv">class的div</div>
+        <br>
+        <div id="tagNameDiv">标签的div</div>
+
+        <input type="button" value="通过id选择器获取dom对象" onclick="fun1()">
+        <input type="button" value="通过class选择器获取dom对象" onclick="fun2()">
+        <input type="button" value="通过标签选择器获取dom对象" onclick="fun3()">
+        <input type="button" value="选取当前页面中所有DOM对象" onclick="fun4()">
+        <input type="button" value="组合选择，通过id和class选择DOM对象" onclick="fun5()">
+    </body>
+</html>

@@ -67,6 +67,8 @@
          -->
         <mapper resource="mapper/EmployeeMapper.xml"/>
         <mapper resource="mapper/DepartmentMapper.xml"/>
+        <mapper resource="mapper/demo01Mapper.xml"/>
+        <mapper resource="mapper/demo02Mapper.xml"/>
         <mapper class="dao.AutoEmpSQL"/>
         <!-- 批量注册
             name：包名

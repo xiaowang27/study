@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zn">
+    <head>
+        <meta charset="UTF-8">
+        <title>表单属性过滤器</title>
+        <script src="../js/jquery-3.6.0.js"></script>
+        <script src="../js/08表单属性过滤器.js"></script>
+    </head>
+    <body>
+        <p>文本框</p>
+        <input type="text" id="text1" value="text1"><br>
+        <input type="text" id="text2" value="text2" disabled><br>
+        <input type="text" id="text3" value="text3"><br>
+        <input type="text" id="text4" value="text4" disabled><br>
+
+        <p>复选框</p>
+        <input type="checkbox" value="游泳">游泳<br>
+        <input type="checkbox" value="健身" checked>健身<br>
+        <input type="checkbox" value="电子游戏">电子游戏<br>
+
+        <p>下拉列表</p>
+        <select id="lang">
+            <option value="java" selected>java语言</option>
+            <option value="go">go语言</option>
+            <option value="php">php语言</option>
+        </select>
+
+        <p>功能按钮</p>
+        <input type="button" id="btn1" value="所有可用的text设值为：hello">
+        <input type="button" id="btn2" value="显示所有被选中的复选框的值">
+        <input type="button" id="btn3" value="显示下拉列表选中的值">
+    </body>
+</html>

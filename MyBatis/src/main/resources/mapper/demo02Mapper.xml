@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.Demo02Dao">
+    <!--增删改语句 start-->
+    <!-- 插入员工信息 -->
+    <insert id="insertEmp" >
+        insert into emp(emp_id,emp_name,gender,email,dept_id)
+        values(#{empId},#{empName},#{gender},#{email},#{deptId})
+    </insert>
+
+    <!-- 删除员工信息 -->
+    <delete id="deleteEmp">
+        delete from emp
+        where emp_id=#{empId}
+    </delete>
+
+    <!-- 修改员工信息 -->
+    <update id="updateEmp">
+        update emp
+        set emp_name=#{empName},gender=#{gender},email=#{email},dept_id=#{deptId}
+        where emp_id=#{empId}
+    </update>
+    <!--增删改语句 end-->
+
+    <!--参数处理 start-->
+    <!--单个参数-->
+    <!--
+        由员工id查找员工
+    -->
+    <select id="singleParam" resultType="bean.Employee">
+        select *
+        from emp
+        where emp_id=#{empId}
+    </select>
+
+    <!--多个参数-->
+    <!--
+        由员工性别和部门id查找员工信息
+    -->
+    <select id="manyParam" resultType="bean.Employee">
+        select *
+        from emp
+        where gender=#{gender} and dept_id=#{deptId}
+    </select>
+
+    <!-- 参类型为POJO 直接参考上面的增删改语句-->
+
+    <!--参数类型为Map-->
+    <select id="paramCategoryIsMap" resultType="bean.Employee">
+        select *
+        from emp
+        where gender='${gender}' and dept_id=#{deptId}
+    </select>
+    <!--参数处理 end-->
+
+    <!--查询语句-返回值类型 start-->
+    <!--返回值类型为
+        Java的基本类型
+        Java的String类型
+        collection集合类型
+        map类型*
+    -->
+    <select id="getByEmpDeptId" resultType="integer">
+        select dept_id
+        from emp
+        where emp_id=#{empId}
+    </select>
+
+    <select id="getByEmpName" resultType="string">
+        select emp_name
+        from emp
+        where emp_id=#{empId}
+    </select>
+
+    <select id="getByEmpList" resultType="bean.Employee">
+        select *
+        from emp
+    </select>
+
+    <select id="getByEmpMap" resultType="map">
+        select emp_name
+        from emp
+        where emp_id=#{empId}
+    </select>
+    <!--查询语句-返回值类型 end-->
+
+
+</mapper>

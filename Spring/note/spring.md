@@ -49,7 +49,6 @@
 ```java
 // ordinary java class
 public class People {
-    @Test
     public void sleep(){
         System.out.println("sleep sleep...");
     }

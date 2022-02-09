@@ -10,7 +10,6 @@ import org.junit.Test;
  */
 
 public class People {
-    @Test
     public void sleep(){
         System.out.println("sleep sleep...");
     }
