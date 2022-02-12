@@ -17,21 +17,64 @@ public class UserController {
     UserService userService;
     /** 用户通用功能---start **/
     /**
+     * 查找账号是否存在
+     * @param userAccount 目标账户
+     * @return 存在返回1，不存在返回0
+     */
+    @RequestMapping("/00001")
+    public Integer getByUserAccount(String userAccount){
+        return userService.getByUserAccount(userAccount);
+    }
+
+    /**
      * 通过用户账号查找用户信息
      * @param account 用户账号
-     * @return 用户信息
+     * @return 用户信息：账号、id、用户名
      */
-    public String findUserAccount(String account){
+    @RequestMapping("/00002")
+    public String findUserInfo(String account){
         return "";
     }
+
     /**
      * 通过用户名查找用户
-     * @param userName
-     * @return
+     * @param userName 用户名
+     * @return 用户信息：账号、id、用户名
      */
-    @RequestMapping("00001")
+    @RequestMapping("/00003")
     public UserEntity getByUserName(String userName){
         return userService.getByUserName(userName);
+    }
+
+    /**
+     * 关注用户
+     * @param followersUserAccount 关注者用户账号
+     * @param byFollowersUserAccount 被关注者用户账号
+     * @return 操作结果信息：1-关注成功，0-关注失败
+     */
+    @RequestMapping("/00004")
+    public Integer followUser(String followersUserAccount,String byFollowersUserAccount){
+        return null;
+    }
+
+    /**
+     * 取消关注
+     * @param followersUserAccount 关注者账号
+     * @param byFollowersUserAccount 被关注者账号
+     * @return 操作结果信息：1-关注成功，0-关注失败
+     */
+    @RequestMapping("/00005")
+    public Integer unfollow(String followersUserAccount,String byFollowersUserAccount){
+        return null;
+    }
+
+    /**
+     * 用户搜索信息
+     * @param infoKeyword 目标信息关键字
+     * @return 所有符合搜索条件的信息
+     */
+    public String[] findInfo(String infoKeyword){
+        return null;
     }
     /** 用户通用功能---end **/
 

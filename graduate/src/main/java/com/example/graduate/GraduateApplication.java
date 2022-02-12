@@ -5,6 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @MapperScan("com.example.graduate.dao")
+@MapperScan("com/example/graduate/user/dao")
 @SpringBootApplication
 public class GraduateApplication {
 

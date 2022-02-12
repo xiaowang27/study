@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.graduate.user.dao.SearchDao">
+    <!-- 根据id查找用户数据 -->
+    <select id="getByUserId" resultType="com.example.graduate.entity.UserEntity">
+        SELECT user_id, user_account, user_name, gender, usser_eamil
+        FROM sht.user_info
+        WHERE user_id=#{userId};
+    </select>
+
+    <!-- 根据账号查找用户数据 -->
+    <select id="getByUserAccount" resultType="com.example.graduate.entity.UserEntity">
+        SELECT user_id, user_account, user_name, gender, usser_eamil
+        FROM sht.user_info
+        WHERE user_account = #{userAccount};
+    </select>
+
+    <!-- 根据用户名搜索用户 -->
+    <select id="getByUserName" resultType="com.example.graduate.entity.UserEntity">
+        SELECT user_id, user_account, user_name, gender, usser_eamil
+        FROM sht.user_info
+        WHERE user_name like #{userName};
+
+    </select>
+</mapper>
