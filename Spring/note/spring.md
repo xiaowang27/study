@@ -43,7 +43,7 @@
 
 1. 下载jar包并导入或添加maven依赖
 2. 创建一个ordinary class，在class中创建一个ordinary method
-3. 创建spring的配置文件，在配置文件中配置需要创建的对象
+3. 创建spring的配置文件，在配置文件中注册需要创建的对象
 4. 编写测试代码，测试类中定义的方法
 
 ```java
@@ -1034,9 +1034,385 @@ public class UserService {
 
 # 3. AOP
 
+**AOP官方解释：** Aspect Oriented Programming缩写面向切面编程。利用AOP可以对业务逻辑的各个部分进行隔离，从而使得业务逻辑各个部分之间的耦合度降低，提高程序的**可重用性**，同时提高了开发效率。
+
+**AOP的功能：** 不修改源代码，新增新功能。《Spring实战》骑士和游吟诗人的关系。
+
+**AOP低层原理：** 动态代理，有两种情况
+
+1. 有接口的情况：使用JDK动态代理，创建接口实现类代理对象，增强类的方法
+
+   ```java
+   // 接口
+   interface UserDao(){
+       void login();
+   }
+   
+   // 实现类
+   class UserDaoImpl implements UserDao{
+       public void login(){
+           // 实现过程
+       }
+   }
+   
+   // 使用jdk动态代理
+   /* 创建UserDao接口实现类代理对象，通过代理对象增强UserDaoImpl的功能*/
+   ```
+
+   
+
+2. 无接口的情况：使用CGLB动态代理，创建子类的代理对象，增强类的方法
+
+   ```java
+   class User(){
+       public void add(){}
+   }
+   
+   // CGLB动态代理
+   /* 创建当前类子类的代理对象*，通过代理对象增强User的功能/
+   ```
 
 
 
+## 3.1 JDK动态代理
+
+&emsp;使用jdk动态代理要用到```Proxy```类的```newProxyInstance(ClassLoader loader,Class<?>[] interface,InvocationHandler h)```方法。改方法的三个参数意义为：
+
+1. ```ClassLoader loader``` 类加载器
+2. ```Class<?>[] interface``` 增强方法所在的类实现的接口，可以有多个
+3. ```InvocationHandler h``` ：一个接口，创建一个类去编写要增强的逻辑并实现此接口
+
+**步骤：**
+
+1. 创建示例接口，以```User```示例
+2. 创建接口实现类，以```UserImpl```示例
+3. 创建```InvacationHandler```接口的实现类，以```EnhanceLogic```示例
+   * 创建有参构造，将目标接口实现类对象传入进来，比如这里要对```User```接口的方法进行增强，就需要传入```UserImpl```
+   * 在实现接口的```invoke```方法中，编写需要增强的逻辑
+4. 创建测试类，使用```Proxy```类创建接口代理对象
+   * 使用```Proxy```类的```newProxyInstance()```方法，创建接口代理对象
+   * 对代理对象进行强转，调用目标方法
+
+```java
+// User接口
+public interface User {
+    int add(int a,int b);
+    StringBuilder update(StringBuilder id);
+}
+```
+
+```java
+// User接口实现类
+public class UserImpl implements User {
+    @Override
+    public int add(int a,int b) {
+        return a+b;
+    }
+
+    @Override
+    public StringBuilder update(StringBuilder id) {
+        return id.append("...");
+    }
+}
+```
+
+```java
+// InvocationHandler接口实现类
+public class EnhanceLogic implements InvocationHandler {
+    private Object invocation;
+
+    // 有参构造,将目标对象传入
+    public EnhanceLogic(Object invocation){
+        this.invocation = invocation;
+    }
+
+    /**
+     * 增强的逻辑写入此方法中
+     * @param proxy 代理对象
+     * @param method 代理对象的方法
+     * @param args 方法参数
+     * @return
+     * @throws Throwable
+     */
+    @Override
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        // 1.目标方法执行之前要做的事情
+        System.out.println(method.getName()+"方法要执行了");
+
+        // 2.被增强的方法开始执行，根据不同的方法执行不同的操作
+        if (method.getName().equals("add")){
+            for(Object o : args){
+                System.out.println("方法参数："+o);
+            }
+        }else{
+            System.out.println("当前id是："+args[0]);
+        }
+        Object invoke = method.invoke(invocation, args);
+
+        // 3.目标方法执行之后要做的事情
+        System.out.println(method.getName()+"方法执行完毕");
+
+        // 4.返回值
+        return invoke;
+    }
+}
+```
+
+```java
+// 测试类
+public class JDKProxy {
+    // 创建接口实现类代理对象
+    public static void main(String[] args) {
+        // 1.newProxyInstance方法的三个参数
+        ClassLoader loader = JDKProxy.class.getClassLoader();
+        Class[] interfaces = {User.class};
+        /**
+         * 第三个参数的内部类写法
+         *         new InvocationHandler() {
+         *             @Override
+         *             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+         *                 return null;
+         *             }
+         *         };
+         */
+
+        // 第三个参数的外部实现类写法
+        User user = new UserImpl();
+        EnhanceLogic h = new EnhanceLogic(user);
+
+        // 2.使用Proxy的方法创建代理对象
+        User proxyInstance = (User)Proxy.newProxyInstance(loader, interfaces, h);
+
+        // 3.调用方法测试
+        int add = proxyInstance.add(3, 10);
+        System.out.println("add()方法的结果是："+add);
+
+        StringBuilder id = new StringBuilder("2022");
+        StringBuilder update = proxyInstance.update(id);
+        System.out.println("update()方法的结果是："+update);
+    }
+}
+```
+
+
+
+## 3.2 AOP术语
+
+**常见术语：**
+
+1. 连接点：哪些方法可以增强，就称为连接点。例如上面例子的add方法、update方法
+2. 切入点：实际被增强的方法就称为切入点，比如只增强的add方法，那么add就是切入点，add和update是连接点
+3. 通知(增强)：实际增强的逻辑部分。通知的五种类型：
+   * 前置通知：发生前执行
+   * 后置通知：发生后执行
+   * 环绕通知：发生前和发生后都执行
+   * 异常通知：发生异常时执行
+   * 最终通知：相当于finally
+4. 切面：将通知应用到切入点的过程。切面是一个动作
+
+
+
+## 3.3 AOP操作
+
+&emsp;将IOC和AOP的概念解释后，接下来就是在spring框架中完成AOP的具体操作。在spring中实现AOP有多种实现方式，实现AOP都是基于```AspectJ```。
+
+&emsp;<font color=#ff7700>AspectJ</font>不是Spring的租出部分，是一个独立的AOP框架。一般把**AspectJ**和Spring框架一起使用，进行AOP操作。
+
+
+
+### 3.3.1 基于AspectJ在spring中实现AOP操作
+
+**基于AspectJ实现AOP操作的两种方式：**
+
+1. 基于xml配置文件实现
+2. 基于注解方式实现（常用）
+
+**进行AOP操作的准备工作步骤：**
+
+1. **引入依赖**
+
+   * spring-aspects
+   * springsource.net.sf.cglib
+   * aopaliance
+   * aspect.weaver
+
+2. **切入点表达式**
+
+   切入点表达式作用：表示对哪个类的哪个方法进行增强
+
+   语法结构：execution([权限修饰符] [返回类型] [全限定类名] [方法名称] [参数列表])
+
+   例子1：对com.dao.BookDao类的add方法进行增强
+
+   ```execution(*com.dao.BookDao.add(..))``` ：第一个```*```表示所有修饰符，返回值可以不写，最后```(..)```表示参数
+
+   例子2：对com.dao.BookDao类的所有方法进行增强
+
+   ```execution(*com.dao.BookDao.*(..))``` 
+
+   例子三：对com.dao包类所有类的方法都就进行增强
+
+   ```execution(*com.dao.*.*(..))```
+
+
+
+### 3.3.2 基于AspectJ的注解的方式
+
+**步骤：**
+
+1. 创建被增强类User，在类中定义方法
+
+2. 创建增强类UserProxy，在类中编写增强逻辑，让不同的方法代表不同的通知类型
+
+3. 进行通知的配置
+   * 在spring配置文件中开启注解扫描
+   
+     ```xml
+     <context:component-scan base-package="demo02.aopOperation"></context:component-scan>
+     ```
+   
+   * 使用注解创建User和UserProxy对象
+   
+   * 在增强类上添加注解```@Aspect```
+   
+   * 在spring配置文件中开启生成代理对象
+   
+   * 配置不同类型的通知
+   
+     在增强类中，对通知方法使用相应的注解，结合切入点表达式进行配置
+   
+   * 你好
+
+**代码实例：**
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation=
+               "http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+    <!-- 开启注解扫描-->
+    <context:component-scan base-package="demo02.aopOperation"></context:component-scan>
+
+    <!-- 开启Aspect生成代理对象 当类有标注@Aspect注解，那就将改类的对象生成代理对象-->
+    <aop:aspectj-autoproxy></aop:aspectj-autoproxy>
+</beans>
+```
+
+```java
+// 被增强的类
+@Component
+public class User {
+    public void add(){
+        System.out.println("add()方法执行了... ...");
+    }
+}
+```
+
+```java
+// 增强的类
+@Component
+@Aspect // 注解表示要生成代理对象
+public class UserProxy {
+    // 前置通知
+    @Before("execution(* demo02.aopOperation.User.add(..))")
+    public void before() {
+        System.out.println("before... 前置通知...");
+    }
+
+    // 后置通知
+    @After("execution(* demo02.aopOperation.User.add(..))")
+    public void after() {
+        System.out.println("after... 后置通知...");
+    }
+
+    // 后置通知 返回值之后执行
+    @AfterReturning("execution(* demo02.aopOperation.User.add(..))")
+    public void afterReturning() {
+        System.out.println("afterReturning... 后置通知，在返回值之后执行...");
+    }
+
+    /**
+     * 环绕通知
+     *
+     * @param point
+     */
+    @Around("execution(* demo02.aopOperation.User.add(..))")
+    public void around(ProceedingJoinPoint point) throws Throwable {
+        System.out.println("around...   环绕之前...");
+        // proceed()表示被增强的方法
+        point.proceed();
+        System.out.println("around...   环绕之后...");
+    }
+
+    // 异常通知
+    @AfterThrowing("execution(* demo02.aopOperation.User.add(..))")
+    public void afterThrowing() {
+        System.out.println("afterThrowing... 异常通知...");
+    }
+}
+```
+
+```java
+    @org.junit.Test
+    public void testAdd(){
+        ApplicationContext context = new ClassPathXmlApplicationContext("SpringXMLDemo02/Demo02.xml");
+        User user = context.getBean("user", User.class);
+        user.add();
+    }
+```
+
+控制台输出：
+
+```
+around...   环绕之前...
+before... 前置通知...
+add()方法执行了... ...
+around...   环绕之后...
+after... 后置通知...
+afterReturning... 后置通知，在返回值之后执行...
+```
+
+
+
+&emsp;异常通知只有在发生异常后在触发，手动为add()方法产生异常后，控制台输出
+
+```
+around...   环绕之前...
+before... 前置通知...
+after... 后置通知...
+afterThrowing... 异常通知...
+```
+
+&emsp;从输出可以看到，after通知无论有无异常都会触发，所以异步称after为最终通知，afterReturning为后置通知
+
+**问题：**<font color=red>使用注解的话，如何像实现接口那样获取方法名等操作呢</font>
+
+
+
+**使用细节：**
+
+1. **重用切入点**
+
+   ```java
+   @Pointcut("execution(* demo02.aopOperation.User.add(..))")
+   public void  pointDemo02(){}
+   // 前置通知
+   @Before("pointDemo02()")
+   public void before() {
+       System.out.println("before... 前置通知...");
+   }
+   ```
+
+2. 有多个增强类对同一方法进行增强，**设置优先级**。在增强类上面添加注解```@Order(int类型值)```，值越小，优先级越高
+
+
+
+### 3.3.3 基于AspectJ的XML配置文件的方式
 
 
 

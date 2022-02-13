@@ -510,30 +510,135 @@ $(function (){
 
 &emsp;函数是jquery提供的功能，在jquery中有成百上千个函数，在此介绍一些常用的函数。
 
-## 4.1 val函数
+## 4.1 val、text、attr函数
 
-&emsp;操作数组中DOM对象的value属性。语法如下：
+**val函数：**操作数组中DOM对象的value属性。语法如下：
 
 1. ```$("选择器").val()```：无参调用，读取数组中第一个DOM对象的value属性值
 2. ```$("选择器").val(值)```：有参调用，对数组中所有DOM对象的value属性进行赋值
 
+**text函数：**操作数组中所有DOM对象的【文字显示内容属性】，语法如下
+
+1. ```$(选择器).text()```：无参调用。读取数组中所有DOM对象的文字显示内容，将内容拼接为一个字符串返回
+2. ```$(选择器).text(parameter)```：有参调用，对数组中所有DOM对象同一赋值
+
+**attr函数：**对val、text之外的其他属性操作，语法如下：
+
+1. ```$(选择器).attr("属性名·")```：获取DOM数组第一个对象的属性值
+2. ```$(选择器).attr("属性名","值")```：对数组中所有的DOM对象的属性设置新值
 
 
-## 4.2 text函数
 
-&emsp;操作数组中所有DOM对象的【文字显示内容属性】
+**示例：**
+
+```html
+<!DOCTYPE html>
+<html lang="zn">
+<head>
+    <meta charset="UTF-8">
+    <title>val函数</title>
+    <script src="../js/jquery-3.6.0.js"></script>
+    <script>
+        $(function () {
+            // 1. 使用jquery选择器选择目标dom对象
+            var $text = $(":text");
+            var $div = $("div");
+            var $img = $("img");
+            
+            var $btn1 = $("#btn1");
+            var $btn2 = $("#btn2");
+            var $btn3 = $("#btn3");
+            var $btn4 = $("#btn4");
+            var $btn5 = $("#btn5");
+            var $btn6 = $("#btn6").click(function () {
+                $img.attr("src", "../image/img_2.png")
+            })
+            
+            // 2. 绑定事件
+            $btn1.click(function () {
+                let val = $text.val()
+                alert(val)
+            });
+            $btn2.click(function () {
+                let val = $text.val("靓仔快来玩")
+            })
+            $btn3.click(function () {
+                let text = $div.text();
+                alert(text)
+            })
+            $btn4.click(function () {
+                let text = $div.text("你不是靓仔");
+            })
+            $btn5.click(function () {
+                let val = $img.attr("src");
+                alert(val)
+            })
+        })
+    </script>
+    <style>
+        div {
+            background-color: #FF7700;
+        }
+    </style>
+</head>
+<body>
+    <p>文本框</p>
+    <input type="text" value="刘备"><br>
+    <input type="text" value="关羽"><br>
+    <input type="text" value="张飞"><br>
+    <hr>
+    
+    <p>文本数据</p>
+    <div>第一个div</div>
+    <div>第二个div</div>
+    <div>第三个div</div>
+    
+    <hr>
+    <p>图片</p>
+    <img src="../image/img_1.png" width="20%">
+    
+    <hr>
+    <p>功能按钮</p>
+    <button id="btn1">获取第一个文本框的值</button>
+    <br>
+    <button id="btn2">修改所有文本框内容为：靓仔快来玩</button>
+    <br>
+    <button id="btn3">获取所有div内的文本显示内容</button>
+    <br>
+    <button id="btn4">修改所有div内的文本显示内容为：你不是靓仔</button>
+    <br>
+    <button id="btn5">获取img标签的src属性值</button>
+    <br>
+    <button id="btn6">修改img标签的src属性</button>
+    <br>
+</body>
+</html>
+```
+
+<font color=red>jquery通过选择器获取的dom对象是一个数组，那么怎么通过索引获取数组中的元素实现上述功能呢？</font>
 
 
 
-### 4.1.3 attr函数
+## 4.2 remove、empty、append函数
+
+**remove函数：**```$(选择器).remove()```：将数组中的所有DOM对象和子对象一起删除
+
+**empty函数：**```$(选择器).empty()```：将数组中所有DOM对象的子对象删除
+
+**append函数：**```$(选择器).append(param)```：为数组中所有的DOM对象添加子对象，例如
+
+```js
+$(选择器).append("<div>动态添加div</div>")
+```
+
+**html函数：**设置或返回被选元素的内容(innerHTML)
+
+* ```$(选择器).html()```：无参调用，获取DOM数组第一个元素的内容
+* ```$(选择器).html(param)```：有参调用，设置DOM数组中所有元素的内容
 
 
 
-1. 第一组
-   * val
-   * text
-   * attr
-2. 第二组
+
 
 # 5. 事件
 

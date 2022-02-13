@@ -1,41 +1,81 @@
 <!DOCTYPE html>
 <html lang="zn">
-    <head>
-        <meta charset="UTF-8">
-        <title>val函数</title>
-        <script src="../js/jquery-3.6.0.js"></script>
-        <script>
+<head>
+    <meta charset="UTF-8">
+    <title>val函数</title>
+    <script src="../js/jquery-3.6.0.js"></script>
+    <script>
+        $(function () {
             // 1. 使用jquery选择器选择目标dom对象
+            var $text = $(":text");
+            var $div = $("div");
+            var $img = $("img");
+            
             var $btn1 = $("#btn1");
             var $btn2 = $("#btn2");
-            var $p = $("p");
-
+            var $btn3 = $("#btn3");
+            var $btn4 = $("#btn4");
+            var $btn5 = $("#btn5");
+            var $btn6 = $("#btn6").click(function () {
+                $img.attr("src", "../image/img_2.png")
+            })
+            
             // 2. 绑定事件
-            $btn1.click(fun1());
-            $btn2.click(fun2());
-
-            // 3. 定义事件
-            function fun1(){
-                var val = $p.val();
+            $btn1.click(function () {
+                let val = $text.val()
                 alert(val)
-            }
-            function fun2(){
-                var val = $p.val("hello world");
-            }
-
-
-
-        </script>
-    </head>
-    <body>
-
-        <p>第1个p</p>
-        <p>第2个p</p>
-        <p>第3个p</p>
-        <p>第4个p</p>
-        <p>第5个p</p>
-
-        <button id="btn1">显示第一个p标签内的内容</button><br>
-        <button id="btn2">对所有p标签内容赋值</button><br>
-    </body>
+            });
+            $btn2.click(function () {
+                let val = $text.val("靓仔快来玩")
+            })
+            $btn3.click(function () {
+                let text = $div.text();
+                alert(text)
+            })
+            $btn4.click(function () {
+                let text = $div.text("你不是靓仔");
+            })
+            $btn5.click(function () {
+                let val = $img.attr("src");
+                alert(val)
+            })
+        })
+    </script>
+    <style>
+        div {
+            background-color: #FF7700;
+        }
+    </style>
+</head>
+<body>
+    <p>文本框</p>
+    <input type="text" value="刘备"><br>
+    <input type="text" value="关羽"><br>
+    <input type="text" value="张飞"><br>
+    <hr>
+    
+    <p>文本数据</p>
+    <div>第一个div</div>
+    <div>第二个div</div>
+    <div>第三个div</div>
+    
+    <hr>
+    <p>图片</p>
+    <img src="../image/img_1.png" width="20%">
+    
+    <hr>
+    <p>功能按钮</p>
+    <button id="btn1">获取第一个文本框的值</button>
+    <br>
+    <button id="btn2">修改所有文本框内容为：靓仔快来玩</button>
+    <br>
+    <button id="btn3">获取所有div内的文本显示内容</button>
+    <br>
+    <button id="btn4">修改所有div内的文本显示内容为：你不是靓仔</button>
+    <br>
+    <button id="btn5">获取img标签的src属性值</button>
+    <br>
+    <button id="btn6">修改img标签的src属性</button>
+    <br>
+</body>
 </html>
