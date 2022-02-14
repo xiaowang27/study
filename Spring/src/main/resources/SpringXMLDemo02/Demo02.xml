@@ -14,4 +14,19 @@
     <!-- 开启Aspect生成代理对象 当类有标注@Aspect注解，那就将改类的对象生成代理对象-->
     <aop:aspectj-autoproxy></aop:aspectj-autoproxy>
 
+    <!-- 使用配置文件实现AOP操作 -->
+    <bean id="book" class="demo02.aopXML.Book"></bean>
+    <bean id="bookProxy" class="demo02.aopXML.BookProxy"></bean>
+
+    <!-- 配置AOP增强 -->
+    <aop:config>
+        <!-- 切入点 -->
+        <aop:pointcut id="bookBefore" expression="execution(* demo02.aopXML.Book.buy(..))"/>
+        <!-- 配置切面 -->
+        <aop:aspect ref="bookProxy">
+            <!-- 配置增强作用具体在哪个方法上 -->
+            <aop:before method="before" pointcut-ref="bookBefore"/>
+            <aop:around method="around" pointcut-ref="bookBefore"/>
+        </aop:aspect>
+    </aop:config>
 </beans>

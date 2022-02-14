@@ -92,7 +92,7 @@ public class People {
 
 * IOC操作：Bean管理(基于xml或注解)
 
-## 2.1 什么是IOC
+**什么是IOC？**
 
 &emsp;控制反转，把对象的创建和对象之间的调用过程，交给spring进行管理。使用Ioc是为了减低耦合。ioc的底层原理涉及到xml解析、工厂模式、反射。
 
@@ -116,7 +116,7 @@ class ClassFactory{
 2. 创建工厂类解析XML文件，得到```<bean>```标签中定义的类的信息，通过反射得到类对象
 3. 返回目标对象
 
-## 2.2 IOC接口
+## 2.1 IOC接口
 
 &emsp;IOC思想基于IOC容器完成，IOC容器的底层就是工厂模式。spring提供IOC容器有两种方式：
 
@@ -130,7 +130,7 @@ class ClassFactory{
 
 
 
-## 2.3 Bean管理
+## 2.2 Bean管理
 
 &emsp;**spring中存在两种bean：**
 
@@ -148,7 +148,7 @@ class ClassFactory{
 
 
 
-## 2.4 基于xml的方式管理
+## 2.3 基于xml的方式管理
 
 **示例：**
 
@@ -366,7 +366,7 @@ public class BookDaoImpl implements BookDao {
 
 
 
-### 2.4.1 基于xml注入集合类型属性
+### 2.3.1 基于xml注入集合类型属性
 
 * 注入数组类型
 * 注入List属性
@@ -458,7 +458,7 @@ public class BookDaoImpl implements BookDao {
 1. 若集合存储的数据类型是自定义对象时，如何实现注入？
 2. 若在其他bean中也想使用这些数据进行注入，那么只能复制粘贴吗？
 
-### 2.4.2 集合属性两个问题的解决
+### 2.3.2 集合属性两个问题的解决
 
 &emsp;问题1的解决方法：当集合中存储的属性是自定义类型时，现将自定义类型在xml中创建好并进行依赖注入，如何在集合中通过```ref```属性进行引入。
 
@@ -523,11 +523,109 @@ public class BookDaoImpl implements BookDao {
       </bean>
   ```
 
-  
-
 * 测试
 
 
+
+### 2.3.3 基于XML的自动装配
+
+**手动装配：**就是通过bean标签的子标签property对属性值进行手动配置。
+
+**手自动装配：**根据指定的装配规则(属性名称或属性类型)，spring自动将匹配的属性值进行注入。
+
+**示例-手动装配**
+
+```java
+package demo01.autowire;
+
+public class Emp {
+    private Dept dept;
+
+    public void setDept(Dept dept) {
+        this.dept = dept;
+    }
+
+    @Override
+    public String toString() {
+        return "Emp{" +
+                "dept=" + dept +
+                '}';
+    }
+
+    public void test(){
+        System.out.println(dept);
+    }
+}
+
+package demo01.autowire;
+
+public class Dept {
+    private String name;
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return "Dept{" +
+                "name='" + name + '\'' +
+                '}';
+    }
+}
+```
+
+```xml
+    <!-- 手动装配 -->
+    <bean id="autoWireEmp" class="demo01.autowire.Emp">
+        <property name="dept" ref="autoWireDept"/>
+    </bean>
+    <bean id="autoWireDept" class="demo01.autowire.Dept">
+        <property name="deptName" value="财务部"></property>
+	</bean>
+```
+
+```
+输出
+Emp{dept=Dept{name='财务部'}}
+```
+
+
+
+**示例-自动装配**
+
+```xml
+    <!-- 自动装配
+         使用bean标签的autowire属性配置自动装配，autowire常用的两个属性值：
+         byName: 根据属性名注入，bean的属性名，必须和注入值bean的id相同。
+                 比如Emp有属性名为dept，那么在xml中注册Dept的bean时，必须为dept
+         byType: 根据属性类型注入,根据属性的类型，在xml中找到目标类型自动注入
+                 当同一类型在xml中定义多个时，byType找不到目标类型，会报错
+    -->
+    <bean id="autoWireEmp" class="demo01.autowire.Emp" autowire="byName">
+    </bean>
+    <bean id="dept" class="demo01.autowire.Dept">
+        <property name="name" value="技术部"></property>
+    </bean>
+```
+
+```
+输出
+Emp{dept=Dept{name='技术部'}}
+
+去掉autowire属性后的输出
+Emp{dept=null}
+```
+
+&emsp;<font color=#DCACCA>在基于xml管理bean中使用```autowire```属性进行自动装配，但是在实际中，都采用注解的方式进行自动装配。</font>
+
+
+
+### 2.3.4 映入外部属性文件
+
+&emsp;当bean中的属性过多时，按照上面的方法写入spring配置文件中。这样不是不方便，且在属性值发生变化时，还需要去修改xml1文件。在实际中都会将其写入一个外部文件中，然后将外部文件引入到xml中。比如对数据库操作时，数据库的相关信息。
+
+**示例-写入外部文件后，在xml中引入**
 
 **2. 将注入集合的数据提取出来，使之可以复用，能注入到别的bean中**
 
@@ -564,7 +662,7 @@ public class BookDaoImpl implements BookDao {
 
 
 
-### 2.4.3 工厂bean
+## 2.4 工厂bean
 
 1. 创建类，该类实现接口FactoryBean，使之成为工厂类
 2. 实现接口中的方法，在getObject()方法中定义返回bean的类型
@@ -596,7 +694,7 @@ public class FactoryBeanTest implements FactoryBean {
 
 
 
-### 2.3.6 Bean的作用域
+## 2.5 Bean的作用域
 
 &emsp;在xml中使用bean标签创建bean时，可以是单例对象也可以是多例对象，默认是单例的。**bean的作用域就是bean是单例还是多例。**验证默认是单例，可以对一个对象多次获取去比较地址。
 
@@ -614,7 +712,7 @@ public class FactoryBeanTest implements FactoryBean {
 
 
 
-### 2.3.7 Bean的生命周期
+## 2.6 Bean的生命周期
 
 &emsp;生命周期：从对象创建到对象销毁的过程。
 
@@ -716,111 +814,9 @@ public class OrdersPost implements BeanPostProcessor {
 
 
 
-### 2.3.8 基于XML的自动装配
-
-**手动装配：**就是通过bean标签的子标签property对属性值进行手动配置。
-
-**手自动装配：**根据指定的装配规则(属性名称或属性类型)，spring自动将匹配的属性值进行注入。
-
-**示例-手动装配**
-
-```java
-package demo01.autowire;
-
-public class Emp {
-    private Dept dept;
-
-    public void setDept(Dept dept) {
-        this.dept = dept;
-    }
-
-    @Override
-    public String toString() {
-        return "Emp{" +
-                "dept=" + dept +
-                '}';
-    }
-
-    public void test(){
-        System.out.println(dept);
-    }
-}
-
-package demo01.autowire;
-
-public class Dept {
-    private String name;
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public String toString() {
-        return "Dept{" +
-                "name='" + name + '\'' +
-                '}';
-    }
-}
-```
-
-```xml
-    <!-- 手动装配 -->
-    <bean id="autoWireEmp" class="demo01.autowire.Emp">
-        <property name="dept" ref="autoWireDept"/>
-    </bean>
-    <bean id="autoWireDept" class="demo01.autowire.Dept">
-        <property name="deptName" value="财务部"></property>
-	</bean>
-```
-
-```
-输出
-Emp{dept=Dept{name='财务部'}}
-```
 
 
-
-**示例-自动装配**
-
-```xml
-    <!-- 自动装配
-         使用bean标签的autowire属性配置自动装配，autowire常用的两个属性值：
-         byName: 根据属性名注入，bean的属性名，必须和注入值bean的id相同。
-                 比如Emp有属性名为dept，那么在xml中注册Dept的bean时，必须为dept
-         byType: 根据属性类型注入,根据属性的类型，在xml中找到目标类型自动注入
-                 当同一类型在xml中定义多个时，byType找不到目标类型，会报错
-    -->
-    <bean id="autoWireEmp" class="demo01.autowire.Emp" autowire="byName">
-    </bean>
-    <bean id="dept" class="demo01.autowire.Dept">
-        <property name="name" value="技术部"></property>
-    </bean>
-```
-
-```
-输出
-Emp{dept=Dept{name='技术部'}}
-
-去掉autowire属性后的输出
-Emp{dept=null}
-```
-
-&emsp;<font color=#DCACCA>在基于xml管理bean中使用```autowire```属性进行自动装配，但是在实际中，都采用注解的方式进行自动装配。</font>
-
-
-
-### 2.3.9 映入外部属性文件
-
-&emsp;当bean中的属性过多时，按照上面的方法写入spring配置文件中。这样不是不方便，且在属性值发生变化时，还需要去修改xml1文件。在实际中都会将其写入一个外部文件中，然后将外部文件引入到xml中。比如对数据库操作时，数据库的相关信息。
-
-
-
-
-
-**示例-写入外部文件后，在xml中引入**
-
-### 2.3.10 基于注解的方式
+## 2.7 基于注解的方式
 
 &emsp;注解时代码特殊标记，注解可以用在类、属性、方法上面。使用注解的目的是简化xml配置。
 
@@ -1227,6 +1223,8 @@ public class JDKProxy {
 1. 基于xml配置文件实现
 2. 基于注解方式实现（常用）
 
+**这两种方式都是在AspectJ的基础上才能进行的**
+
 **进行AOP操作的准备工作步骤：**
 
 1. **引入依赖**
@@ -1412,9 +1410,71 @@ afterThrowing... 异常通知...
 
 
 
+**完全注解开发：** 创建配置类，将xml配置文件中的配置全部使用注解代替，以下配置类为例：
+
+```java
+@Configuration	/// 表示是一个配置类
+@ComponentScan(basePackages = {"demo02.aopOperation"})	// 值是一个数组，表示开启组件扫描
+@EnableAspectJAutoProxy(proxyTargetClass = true)	// 开启AspectJ代理对象生成
+// proxyTargetClass默认值是true
+public class ConfigAop {
+}
+
+```
+
+
+
+
+
 ### 3.3.3 基于AspectJ的XML配置文件的方式
 
+**步骤：**
 
+1. 创建两个类：增强类和被增强类，编写对应方法
+2. 在spring配置文件中创建两个类对象
+3. 在spring配置文件中配置切入点
+
+```java
+// 被增强类
+public class Book {
+    public void buy(){
+        System.out.println("buy()...");
+    }
+}
+
+
+// 增强类
+public class BookProxy {
+    public void before(){
+        System.out.println("前置通知-before()...");
+    }
+    public void around(ProceedingJoinPoint point) throws Throwable {
+        System.out.println("环绕通知-around() 前...");
+        point.proceed();
+        System.out.println("环绕通知-around() 后...");
+    }
+}
+
+```
+
+```xml
+<!-- spring配置文件 -->   
+   <!-- 使用配置文件实现AOP操作 -->
+    <bean id="book" class="demo02.aopXML.Book"></bean>
+    <bean id="bookProxy" class="demo02.aopXML.BookProxy"></bean>
+
+    <!-- 配置AOP增强 -->
+    <aop:config>
+        <!-- 切入点 -->
+        <aop:pointcut id="bookBefore" expression="execution(* demo02.aopXML.Book.buy(..))"/>
+        <!-- 配置切面 -->
+        <aop:aspect ref="bookProxy">
+            <!-- 配置增强作用具体在哪个方法上 -->
+            <aop:before method="before" pointcut-ref="bookBefore"/>
+            <aop:around method="around" pointcut-ref="bookBefore"/>
+        </aop:aspect>
+    </aop:config>
+```
 
 
 
