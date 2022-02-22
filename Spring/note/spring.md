@@ -321,7 +321,7 @@ public class BookDaoImpl implements BookDao {
    }
    ```
 
-   
+
 
 2. 在spring的配置文件中进行配置，使用IOC对其管理
 
@@ -350,7 +350,7 @@ public class BookDaoImpl implements BookDao {
    
    ```
 
-   
+
 
 3. 试验
 
@@ -411,7 +411,7 @@ public class BookDaoImpl implements BookDao {
    }
    ```
 
-   
+
 
 2. 配置xml文件
 
@@ -491,7 +491,7 @@ public class BookDaoImpl implements BookDao {
   }
   ```
 
-  
+
 
 * 在xml文件中配置
 
@@ -986,7 +986,7 @@ public class UserService {
 }
 ```
 
- 
+
 
 **示例3：**使用@Resource注解实现示例1和2。@Resource注解是javax提供的。
 
@@ -1055,7 +1055,7 @@ public class UserService {
    /* 创建UserDao接口实现类代理对象，通过代理对象增强UserDaoImpl的功能*/
    ```
 
-   
+
 
 2. 无接口的情况：使用CGLB动态代理，创建子类的代理对象，增强类的方法
 
@@ -1083,11 +1083,11 @@ public class UserService {
 1. 创建示例接口，以```User```示例
 2. 创建接口实现类，以```UserImpl```示例
 3. 创建```InvacationHandler```接口的实现类，以```EnhanceLogic```示例
-   * 创建有参构造，将目标接口实现类对象传入进来，比如这里要对```User```接口的方法进行增强，就需要传入```UserImpl```
-   * 在实现接口的```invoke```方法中，编写需要增强的逻辑
+    * 创建有参构造，将目标接口实现类对象传入进来，比如这里要对```User```接口的方法进行增强，就需要传入```UserImpl```
+    * 在实现接口的```invoke```方法中，编写需要增强的逻辑
 4. 创建测试类，使用```Proxy```类创建接口代理对象
-   * 使用```Proxy```类的```newProxyInstance()```方法，创建接口代理对象
-   * 对代理对象进行强转，调用目标方法
+    * 使用```Proxy```类的```newProxyInstance()```方法，创建接口代理对象
+    * 对代理对象进行强转，调用目标方法
 
 ```java
 // User接口
@@ -1199,11 +1199,11 @@ public class JDKProxy {
 1. 连接点：哪些方法可以增强，就称为连接点。例如上面例子的add方法、update方法
 2. 切入点：实际被增强的方法就称为切入点，比如只增强的add方法，那么add就是切入点，add和update是连接点
 3. 通知(增强)：实际增强的逻辑部分。通知的五种类型：
-   * 前置通知：发生前执行
-   * 后置通知：发生后执行
-   * 环绕通知：发生前和发生后都执行
-   * 异常通知：发生异常时执行
-   * 最终通知：相当于finally
+    * 前置通知：发生前执行
+    * 后置通知：发生后执行
+    * 环绕通知：发生前和发生后都执行
+    * 异常通知：发生异常时执行
+    * 最终通知：相当于finally
 4. 切面：将通知应用到切入点的过程。切面是一个动作
 
 
@@ -1229,10 +1229,10 @@ public class JDKProxy {
 
 1. **引入依赖**
 
-   * spring-aspects
-   * springsource.net.sf.cglib
-   * aopaliance
-   * aspect.weaver
+    * spring-aspects
+    * springsource.net.sf.cglib
+    * aopaliance
+    * aspect.weaver
 
 2. **切入点表达式**
 
@@ -1246,7 +1246,7 @@ public class JDKProxy {
 
    例子2：对com.dao.BookDao类的所有方法进行增强
 
-   ```execution(*com.dao.BookDao.*(..))``` 
+   ```execution(*com.dao.BookDao.*(..))```
 
    例子三：对com.dao包类所有类的方法都就进行增强
 
@@ -1263,23 +1263,23 @@ public class JDKProxy {
 2. 创建增强类UserProxy，在类中编写增强逻辑，让不同的方法代表不同的通知类型
 
 3. 进行通知的配置
-   * 在spring配置文件中开启注解扫描
-   
-     ```xml
-     <context:component-scan base-package="demo02.aopOperation"></context:component-scan>
-     ```
-   
-   * 使用注解创建User和UserProxy对象
-   
-   * 在增强类上添加注解```@Aspect```
-   
-   * 在spring配置文件中开启生成代理对象
-   
-   * 配置不同类型的通知
-   
-     在增强类中，对通知方法使用相应的注解，结合切入点表达式进行配置
-   
-   * 你好
+    * 在spring配置文件中开启注解扫描
+
+      ```xml
+      <context:component-scan base-package="demo02.aopOperation"></context:component-scan>
+      ```
+
+    * 使用注解创建User和UserProxy对象
+
+    * 在增强类上添加注解```@Aspect```
+
+    * 在spring配置文件中开启生成代理对象
+
+    * 配置不同类型的通知
+
+      在增强类中，对通知方法使用相应的注解，结合切入点表达式进行配置
+
+    * 你好
 
 **代码实例：**
 
@@ -1480,13 +1480,508 @@ public class BookProxy {
 
 # 4. JDBCTemplate
 
+&emsp;**JDBCTemplate：**JdbcTemplate是spring对jdbc的封装，能更加方便的实现对数据库的操作
+
+
+
+
+
+## 4.1 使用JdbcTemplate准备工作
+
+1. **导入相关jar包或添加依赖：**
+
+    * ```mysql-connector```
+    * ```druid```
+    * ```spring-jdbc```
+    * ```spring-tx```：针对事务相关操作的依赖
+    * ```spring-orm```：spring需要整合mybatis、hibernate等框架时，需要
+
+2. **在spring配置文件中配置数据库连接池**
+
+   ```xml
+       <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">
+           <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+           <property name="url" value="jdbc:mysql://localhost:3306/spring_study" />
+           <property name="username" value="root"/>
+           <property name="password" value="123456"/>
+       </bean>
+   ```
+
+3. **配置JdbcTemplate对象，注入DataSource：**
+
+   ```xml
+       <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+           <!-- jdbcTemplate源码使用的是set注入 -->
+           <property name="dataSource"  ref="dataSource"/>
+       </bean>
+   ```
+
+4. **创建service类、dao类，在dao注入jdbcTemplate对象**
+
+5. **创建数据表，并创建对应的实体类**：
+
+   ```sql
+   create table t_book(
+   	`book_id` bigint(20) primary key auto_increment,
+   	`book_name` varchar(100) not null,
+   	`book_status` varchar(50) not null
+   )auto_increment = 10
+   ```
+
+
+
+## 4.2 添加操作
+
+**spring.xml中开启组件扫描：** ```<context:component-scan base-package="demo03" />```
+
+**package-dao：**
+
+```java
+// 接口
+public interface BookDao {
+    // 添加方法
+    void addBook(BookEntity bookEntity);
+}
+
+// 实现类
+@Repository
+public class BookDaoImpl implements BookDao {
+    // 注入jdbcTemplate
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    @Override
+    public void addBook(BookEntity bookEntity) {
+        // 1.定义sql
+        String sql = "insert into t_book values(?,?,?)";
+        // 2. 获取参数
+        Integer bookId = bookEntity.getBookId();
+        String bookName = bookEntity.getBookName();
+        String bookStatus = bookEntity.getBookStatus();
+        // 3.调用jdbcTemplate方法，添加数据
+        jdbcTemplate.update(sql, bookId, bookName, bookStatus);
+    }
+}
+```
+
+**package-service：**
+
+```java
+@Service
+public class BookService {
+    // 注入dao
+    @Autowired
+    private BookDao bookDao;
+
+    public void add(BookEntity book) {
+        bookDao.addBook(book);
+    }
+}
+```
+
+**package-test：**
+
+```java
+    @Test
+    public void add() {
+        ApplicationContext context = new ClassPathXmlApplicationContext("springXmlDemo03/demo03Spring.xml");
+        BookService bean = context.getBean("bookService", BookService.class);
+
+        BookEntity book = new BookEntity();
+        book.setBookId(11);
+        book.setBookName("红楼梦");
+        book.setBookStatus("正常");
+
+        bean.add(book);
+    }
+```
+
+
+
+## 4.3 修改、删除操作
+
+**package-dao：**
+
+```java
+    @Override
+    public void update(BookEntity book) {
+        // 1.定义sql
+        String sql = "update t_book set book_name=?,book_status = ? where book_id = ?";
+        // 2.获取参数
+        Integer bookId = book.getBookId();
+        String bookName = book.getBookName();
+        String bookStatus = book.getBookStatus();
+        // 3.调用jdbcTemplate方法
+        int update = jdbcTemplate.update(sql, bookName, bookStatus, bookId);
+        if (update == 1) {
+            System.out.println("修改成功");
+        } else {
+            System.out.println("修改失败");
+        }
+    }
+
+    @Override
+    public void delete(int i) {
+        // 1.定义sql
+        String sql = "delete from t_book where book_id=?";
+        // 2.调用jdbcTemplate方法
+        int delete = jdbcTemplate.update(sql, i);
+        if (delete == 1) {
+            System.out.println("删除成功");
+        } else {
+            System.out.println("删除失败");
+        }
+```
+
+**<font color=#ff7700>注意：</font>** 调用方法时，参数的位置要和sql语句中对应起来，别错位了。
+
+
+
+
+
+## 4.4 查询操作
+
+### 4.4.1 查询返回单个值
+
+```java
+    @Override
+    public int findSum() {
+        String sql = "select count(*) from t_book";
+        return jdbcTemplate.queryForObject(sql,Integer.class);
+    }
+```
+
+
+
+**```queryForObject(String sql,RowMapper<T> rowMapper,Object... args)```方法介绍：**
+
+1. sql：sql语句
+2. RowMapper：是一个接口，返回不同类型数据，使用这个接口的实现类完成数据封转。spring封转的这个。
+3. args：sql语句参数
+
+*```query()````方法也有这几个参数，是同一意思*
+
+
+
+### 4.5.2 查询返回对象
+
+```java
+    @Override
+    public BookEntity findBookInfo(int bookId) {
+        String sql = "select * from t_book where book_id=?";
+        return jdbcTemplate.queryForObject(sql,new BeanPropertyRowMapper<BookEntity> (BookEntity.class),bookId);
+    }
+```
+
+
+
+### 4.5.3 查询返回集合类型
+
+```java
+    @Override
+    public List<BookEntity> findBookList() {
+        String sql = "select * from t_book";
+        return jdbcTemplate.query(sql,new BeanPropertyRowMapper<BookEntity>(BookEntity.class));
+    }
+```
+
+
+
+
+
+## 4.5 批量操作
+
+### 4.5.1 批量添加
+
+```batchUpdate(String sql,List<Object[]> batchArgs)``` ：
+
+1. 第一个参数：sql语句
+2. 第二个参数：List集合，要添加的多条记录
+
+**方法示例：**
+
+```java
+    @Override
+    public void batchAdd(List<Object[]> batchArgs) {
+        String sql = "insert into t_book values(?,?,?)";
+        // 底层就是将List中的集合便利传递给sql语句执行一遍
+        int[] books = jdbcTemplate.batchUpdate(sql,batchArgs);
+        System.out.println(Arrays.toString(books));
+    }
+```
+
+
+
+### 4.5.2 批量修改、删除
+
+```java
+    @Override
+    public void batchUpdate(List<Object[]> batchArgs) {
+        String sql = "update t_book set book_name=?,book_status=? where book_id=?";
+        int[] ints = jdbcTemplate.batchUpdate(sql, batchArgs);
+        System.out.println(Arrays.toString(ints));
+    }
+
+    @Override
+    public void batchDelete(List<Object[]> list) {
+        String sql = "delete from t_book where book_id=? ";
+        int[] ints = jdbcTemplate.batchUpdate(sql, list);
+        System.out.println(Arrays.toString(ints));
+    }
+}
+```
+
+一个Objectp[]元素就是一条sql语句的所有参数
+
+---
+
 
 
 
 
 # 5. 事务管理
 
+**事务：**事务是数据库操作最基本单元，逻辑上是一组操作，要么这一组操作全部成功，要么全部失败。
 
+**事务四大特性：**
+
+1. 原子性：操作不可分割，一组事务的全部操作要么都成功，要么都失败
+2. 一致性：数据一致性，相当于守恒
+3. 隔离性：多个事务同时操作一条数据时，不会产生影响
+4. 持久性：保存在了数据库中
+
+
+
+## 5.1 搭建事务操作环境
+
+&emsp;以银行转账为例：张三有1000元，李四有200元，李四找张三借300元
+
+| WEB层 | Service层          | Dao层                                    |
+| ----- | ------------------ | ---------------------------------------- |
+|       | 业务操作           | 数据库操作                               |
+|       | (1) 创建转账的方法 | 创建两个方法：1.价钱的方法；2.少钱的方法 |
+
+
+
+**1. 创建数据库表、添加数据：**
+
+```sql
+-- 创建数据表
+create table t_account(
+	`user_id` int(20) auto_increment,
+	`user_name` varchar(10) not null,
+	`user_money` int(100) not null,
+	primary key (`user_id`)
+)auto_increment 2022;
+
+-- 插入数据
+insert into t_account (user_name,user_money) values('张三',1000);
+insert into t_account (user_name,user_money) values('李四',200);
+```
+
+**2. 创建service，搭建dao，完成对象创建和注入关系：**
+
+```java
+// DAO
+@Repository
+public class UserDaoImpl implements UserDao{
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    @Override
+    public int addMoney(int money,int userId) {
+        String sql = "update t_account set user_money = user_money-? where user_id=?";
+        return jdbcTemplate.update(sql, money);
+    }
+
+    @Override
+    public int reduceMoney(int money,int userId) {
+        String sql = "update t_account set user_money = user_money+? where user_id=?";
+        return jdbcTemplate.update(sql, money);
+    }
+}
+
+// Service
+@Service
+public class UserService {
+    @Autowired
+    private UserDao userDao;
+
+    public int accountMoney(int userId1,int userId2,int money){
+        // 加钱的人
+        int i = userDao.addMoney(money, userId1);
+
+        // 少钱的人
+        int j = userDao.reduceMoney(money, userId2);
+
+        return i+j;
+    }
+}
+
+
+// Controller
+public class UserController {
+    @Test
+    public void testAccount(){
+        ApplicationContext context = new ClassPathXmlApplicationContext("SpringXmlDemo04/demo04.xml");
+        UserService userService = context.getBean("userService", UserService.class);
+        int i = userService.accountMoney(2022, 2023, 300);
+        if(i==2){
+            System.out.println("成功");
+        }else{
+            System.out.println("失败");
+        }
+    }
+}
+```
+
+&emsp;<font color=red>当业务逻辑操作出问题时，插入数据就会报错，比如service在调用```reduceMoney()```时产生异常，那么就会造成李四加钱了，但是张三没扣钱</font>
+
+
+
+## 5.2 使用事务解决上述可能产生的问题
+
+**使用事务解决上述5.1可能产生的问题：**在业务逻辑层的方法中按照以下四步执行：
+
+1. 开启事务
+2. 进行业务操作(同时捕获异常)
+3. 选择事务提交或回滚。没有异常则提交，有则回滚
+
+```java
+    public int accountMoney(int userId1,int userId2,int money){
+        // 1.开启事务
+
+        // 2.进行业务操作
+        int i = userDao.addMoney(money, userId1);
+        int j = userDao.reduceMoney(money, userId2);
+        // 模拟异常
+        int m = 10/0;
+        // 3.没有产生异常-事务提交
+        // 3.产生异常-事务回滚
+
+        return i+j;
+    }
+```
+
+
+
+## 5.3 使用spring进行事务管理
+
+&emsp;一般将事务添加到JavaEE三层结构里面的Service层。在spring中进行事务管理操作有两种方式：**编程式事务管理**和**声明式事务管理**。一般使用声明式事务管理。在spring进行声明式事务管理时，在底层使用了AOP原理。
+
+&emsp;**Spring事务管理API：**提供一个接口```PlatformTransactionManager```，代表事务管理器，这个接口针对不同框架提供不同的实现类。
+
+### 5.3.1 基于注解方式
+
+**步骤：**
+
+1. 在spring配置文件中配置事务管理器
+
+   ```xml
+       <!-- 创建事务管理器 -->
+       <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+           <!-- 注入数据源 -->
+           <property name="dataSource" ref="dataSource"/>
+       </bean>
+   ```
+
+2. 在spring配置文件中开启事务注解
+
+   * 引入名称空间tx
+
+     ```xml
+     <beans xmlns="http://www.springframework.org/schema/beans"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xmlns:context="http://www.springframework.org/schema/context"
+            xmlns:tx="http://www.springframework.org/schema/tx"
+            xsi:schemaLocation=
+                    "http://www.springframework.org/schema/beans
+                    http://www.springframework.org/schema/beans/spring-beans.xsd
+                    http://www.springframework.org/schema/context
+                    http://www.springframework.org/schema/context/spring-context.xsd
+                    http://www.springframework.org/schema/tx
+                    http://www.springframework.org/schema/tx/spring-tx.xsd
+     ">
+     ```
+
+   * 开启事务注解
+
+     ```xml
+         <tx:annotation-driven transaction-manager="transactionManager"/>
+     ```
+
+3. 在需要进行事务管理的类或方法上面添加```@Transactional```注解
+
+
+
+### 5.3.2 @Transactional注解的参数
+
+&emsp;以下只举例了部分常用的
+
+#### 5.3.2.1 propagation-事务传播行为
+
+&emsp;概念：当一个事务方法被其他方法调用时，它的事务执行方式被称为事务传播行为。加入有事务方法a、b，普通方法c
+
+|    参数值    |                             说明                             |                             例子                             |
+| :----------: | :----------------------------------------------------------: | :----------------------------------------------------------: |
+|   required   | 若有事务在运行，则该方法就在次事务内运行，否则启动一个新事务并在其中运行 | a调用b，b的事务在a中运行；c调用b，b新启动一个事务并在其中运行 |
+| required_new | 当前方法必须启动新事务，并在其中运行；若有事务正在运行，应该将其挂起 | a调用b，挂起a的事务并启动新事务，b的事务在其中运行；c调用b，启动新事务并在其中运行 |
+|   supports   | 若有事务在运行，则当前方法子啊事务内运行，否则可以不运行在事务中 |    a调用b，b的事务在a的事务中运行，c调用b，b的事务不运行     |
+| not_supports |    当前方法不应该运行在事务中，若有运行的事务，将事务挂起    |                                                              |
+|  mandatory   | 当前方法必须运行在事务内部，若没有正在运行的事务，就抛出异常 |                                                              |
+|    never     |    当前的方法不应该运行在事务中，若有运行的事务就抛出异常    |                                                              |
+|    nested    | 若有事务正在运行，当前的方法就应该在这个事务的嵌套事务内运行，否则就启动一个新的事务，并在新事务内运行 |                                                              |
+
+
+
+#### 5.3.2.2 isolation-事务隔离级别
+
+&emsp;事务存在隔离性，多事务操作之间不会产生影响。若不考虑隔离性会产生以下问题：
+
+1. 脏读：两个事务读取的数据不一致。未提交事务读取到其他未提交事务的数据
+2. 不可重复读：在一个事务内对同一数据两次读取结果不一样。未提交的事务读取到已提交事务修改的数据
+3. 欢读：：未提交事务读取到另一提交事务添加的数据
+
+
+
+&emsp;通过设置事务隔离级别可以解决以上问题：
+
+| 参数值                    | 脏读 | 不可重复读 | 幻读 |
+| ------------------------- | ---- | ---------- | ---- |
+| read uncommitted-读未提交 | 有   | 有         | 有   |
+| read committed-读已提交   | 无   | 有         | 有   |
+| repeatable read-可重复读  | 无   | 无         | 有   |
+| serializable-串行话化     | 无   | 无         | 无   |
+
+*mysql默认隔离级别是可重复读*、
+
+
+
+#### 5.3.2.3 timeout-超时时间
+
+
+
+
+
+#### 5.3.2.4 readOnly-是否只读
+
+
+
+#### 5.3.2.5 rollbackFor-回滚
+
+
+
+
+
+
+
+
+
+#### 5.3.2.6 noRollbackFor-不回滚
+
+
+
+### 5.3.3 基于xml配置文件方式
 
 
 
