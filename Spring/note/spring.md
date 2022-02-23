@@ -724,7 +724,9 @@ public class FactoryBeanTest implements FactoryBean {
 3. 调用bean的初始化方法
 4. 将bean的实例传递给bean后置处理器的方法postProcessAfterInitialization()
 5. bean可以被使用
-6. 当容器关闭的时候，调用bean的销毁方法(需要配置销毁方法)
+6. 当容器关闭的时候，调用bean的销毁方sdasadasadasasdsasd
+6. 
+6. 法(需要配置销毁方法)
 
 *不添加后置处理器是不会有第三步和第五步的*
 
@@ -934,7 +936,7 @@ public class SpringConfig {
 
 ### 2.3.12 基于注解注入属性
 
-&emsp;spring提供了@AutoWired、@Qualifier、@resource三个注解实现属性注入。
+&emsp;spring提供了@AutoWired、@Qualifier、@Resource三个注解实现属性注入。
 
 **@AutoWired：**根据属性类型进行自动装配
 
@@ -1278,8 +1280,6 @@ public class JDKProxy {
     * 配置不同类型的通知
 
       在增强类中，对通知方法使用相应的注解，结合切入点表达式进行配置
-
-    * 你好
 
 **代码实例：**
 
@@ -1867,11 +1867,11 @@ public class UserController {
 
 ## 5.3 使用spring进行事务管理
 
-&emsp;一般将事务添加到JavaEE三层结构里面的Service层。在spring中进行事务管理操作有两种方式：**编程式事务管理**和**声明式事务管理**。一般使用声明式事务管理。在spring进行声明式事务管理时，在底层使用了AOP原理。
+&emsp;一般将事务添加到JavaEE三层结构里面的Service层。在spring中进行事务管理操作有两种方式：<font color=#ff7700>**编程式事务管理**</font>和<font color=#ff7700>**声明式事务管理**</font>。一般使用声明式事务管理。在spring进行声明式事务管理时，在底层使用了AOP原理。
 
 &emsp;**Spring事务管理API：**提供一个接口```PlatformTransactionManager```，代表事务管理器，这个接口针对不同框架提供不同的实现类。
 
-### 5.3.1 基于注解方式
+## 5.4 基于注解方式
 
 **步骤：**
 
@@ -1914,11 +1914,11 @@ public class UserController {
 
 
 
-### 5.3.2 @Transactional注解的参数
+### 5.4.1 @Transactional注解的参数
 
 &emsp;以下只举例了部分常用的
 
-#### 5.3.2.1 propagation-事务传播行为
+### 5.4.2 propagation-事务传播行为 
 
 &emsp;概念：当一个事务方法被其他方法调用时，它的事务执行方式被称为事务传播行为。加入有事务方法a、b，普通方法c
 
@@ -1934,7 +1934,7 @@ public class UserController {
 
 
 
-#### 5.3.2.2 isolation-事务隔离级别
+### 5.4.3 isolation-事务隔离级别
 
 &emsp;事务存在隔离性，多事务操作之间不会产生影响。若不考虑隔离性会产生以下问题：
 
@@ -1957,45 +1957,252 @@ public class UserController {
 
 
 
-#### 5.3.2.3 timeout-超时时间
+
+
+### 5.4.4 timeout-超时时间
+
+&emsp;事务需要在一定时间内进行提交，若不提交则进行回滚。默认值为-1，设置单位为妙进行计算。
+
+
+
+### 5.4.5  readOnly-是否只读
+
+&emsp;**读：**查询操作
+
+&emsp;**写：**添加、修改、删除操作。
+
+&emsp;readOnly默认值为false，表示可读可写，将其值设置为true后只能进行查询
+
+### 5.4.6 rollbackFor-回滚
+
+&emsp;设置出现哪些异常时，事务进行回滚
+
+
+
+### 5.4.7 noRollbackFor-不回滚
+
+&emsp;设置出现哪些异常时，事务不进行回滚
 
 
 
 
 
-#### 5.3.2.4 readOnly-是否只读
+## 5.5 基于xml配置文件方式
+
+**步骤：**
+
+1. 在spring的配置文件中配置事务管理器
+2. 配置通知、切入点、切面
+
+```xml
+    <context:component-scan base-package="demo04"/>
+    <!-- 数据库连接池 -->
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+        <property name="url" value="jdbc:mysql://localhost:3306/spring_study?characterEncoding=utf8"/>
+        <property name="username" value="root"/>
+        <property name="password" value="123456"/>
+    </bean>
+
+    <!-- JdbcTemplate对象 -->
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <!-- 事务管理器 -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <!-- 配置通知 -->
+    <tx:advice id="advice">
+        <!-- 配置事务参数 -->
+        <tx:attributes>
+            <!-- 指定哪种规则的方法上面添加事务 account*表示account开头的方法-->
+            <tx:method name="account*" propagation="REQUIRED"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <!-- 配置切入点和切面 -->
+    <aop:config>
+        <!-- 切入点 -->
+        <aop:pointcut id="pt" expression="execution(* demo04.service.UserService.*(..))"/>
+        <!-- 切面 -->
+        <aop:advisor advice-ref="advice" pointcut-ref="pt"/>
+    </aop:config>
+```
 
 
 
-#### 5.3.2.5 rollbackFor-回滚
+## 5.6 完全注解开发
+
+&emsp;在5.4基于注解开发中，还是使用了xml配置文件，配置了事务管理器还开启事务注解
+
+```xml
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <!-- 注入数据源 -->
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+```
+
+&emsp;可以使用配置类的方法实现完全注解开发
+
+```java
+// 配置类
+@Configuration  // 声明配置类
+@ComponentScan(basePackages = "demo04") // 组件扫描
+@EnableTransactionManagement    // 开启事务
+public class TxConfig {
+    // 创建数据库连接池
+    @Bean
+    public DruidDataSource getDruidDataSource(){
+        DruidDataSource druidDataSource = new DruidDataSource();
+        druidDataSource.setDriverClassName("com.mysql.jdbc.Driver");
+        druidDataSource.setUrl("jdbc:mysql://localhost:3306/spring_study?characterEncoding=utf8");
+        druidDataSource.setUsername("root");
+        druidDataSource.setPassword("123456");
+        return druidDataSource;
+    }
+
+    // 创建JdbcTemplate对象
+    @Bean
+    public JdbcTemplate getJdbcTemplate(DataSource dataSource){
+        // 到ioc容器中根据类型找到dataSource
+        JdbcTemplate jdbcTemplate = new JdbcTemplate();
+        // 注入dataSource
+        jdbcTemplate.setDataSource(dataSource);
+        return jdbcTemplate;
+    }
+
+    @Bean
+    public DataSourceTransactionManager getDataSourceTransactionManager(DataSource dataSource){
+        DataSourceTransactionManager transactionManager = new DataSourceTransactionManager();
+        transactionManager.setDataSource(dataSource);
+        return transactionManager;
+    }
+}
+```
+
+```java
+// 测试方法
+    @Test
+    public void test2(){
+        ApplicationContext context = new AnnotationConfigApplicationContext(TxConfig.class);
+        UserService userService = context.getBean("userService", UserService.class);
+        int i = userService.accountMoney(2022, 2023, 300);
+        if(i==2){
+            System.out.println("成功");
+        }else{
+            System.out.println("失败");
+        }
+    }
+```
+
+
+
+# 6. spring5新功能
+
+&emsp;spring5框架的代码基于java8，运行时兼容jdk9，许多不建议使用的类和方法在代码库中被删除了。spring5框架自带了通用的日志封转，但也还可以整合其他的日志框架。
+
+## 6.1 Spring5整合Log4j2
+
+&emsp;spring移除了```Log4jConfigListener```（用来整合log4j），spring5不支持log4j，官方建议使用```Log4j2```。
+
+**在spring5中整合log4j2**
+
+1. 导入jar包或相关依赖
+
+   ```xml
+           <!-- 整合日志框架 start -->
+           <dependency>
+               <groupId>org.apache.logging.log4j</groupId>
+               <artifactId>log4j-api</artifactId>
+               <version>2.14.1</version>
+           </dependency>
+           <dependency>
+               <groupId>org.apache.logging.log4j</groupId>
+               <artifactId>log4j-core</artifactId>
+               <version>2.14.1</version>
+           </dependency>
+           <dependency>
+               <groupId>org.apache.logging.log4j</groupId>
+               <artifactId>log4j-slf4j-impl</artifactId>
+               <version>2.14.1</version>
+           </dependency>
+           <dependency>
+               <groupId>org.slf4j</groupId>
+               <artifactId>slf4j-api</artifactId>
+               <version>1.7.32</version>
+           </dependency>
+           <!-- 整合日志框架 end -->
+   ```
+
+2. 创建log4j2的配置文件log4j2.xml
+
+   完整配置见：[Log4j2完整配置文件](https://www.cnblogs.com/wangxiaojie233/p/15924506.html)
+
+
+
+## 6.2 @Nullable注解&函数式风格GenericApplicationContext
+
+**Spring5核心容器支持@Nullable注解和函数式风格GenericApplicationContext**
+
+### 6.2.1 @Nullable注解
+
+&emsp;@Nullable注解可以使用在方法、属性、参数上面，表示方法返回值、属性、参数可以为空。
+
+```java
+public class A{
+    @Nullable
+    private int i;
+    @Nullable
+    public void a(@Nullable String a){
+        System.Out.println(a);
+    }
+}
+```
+
+
+
+### 6.2.2 函数式风格注册对象
+
+ &emsp;当我们使用```new```创建了一个对象后，由于这个对象不是spring创建的，所以spring不能管理这个对象。可以通过函数式风格创建对象，交给spring进行管理。
+
+```java
+    @org.junit.Test
+    public  void GenericApplicationContextTest(){
+        // 1.创建GenericApplicationContext对象
+        GenericApplicationContext context = new GenericApplicationContext();
+        // 2.调用context的方法注册对象
+        context.refresh();
+        context.registerBean("user",User.class,() -> new User()); // 指定bean的id，和需要创建对象类型的class，然后使用Lambda表达式new对象
+        // 3.获取在spring注册的对象
+        Object bean = context.getBean("user");
+        System.out.println(bean);
+    }
+```
+
+
+
+## 6.3 Spring5整合JUnit
+
+ **整合JUnit4**
+
+1. 导入依赖：```spring-test```
+2. 创建测试类，使用注解方式完成
 
 
 
 
 
+## 6.4 Spring5新功能-Webflux
 
-
-
-
-#### 5.3.2.6 noRollbackFor-不回滚
-
-
-
-### 5.3.3 基于xml配置文件方式
-
-
-
-
-
-# 6. spring5新特性
-
-
-
-
-
-
-
-
+* spring-Webflux
+* 响应式编程
+* Webflux执行流程和核心API
+* SpringWebflux(基于注解编程模型)
+* SpringWebflux(基于函数式编程模型)
 
 
 

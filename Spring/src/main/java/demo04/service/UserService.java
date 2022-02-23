@@ -17,7 +17,7 @@ public class UserService {
         // 2.进行业务操作
         int i = userDao.addMoney(money, userId1);
         // 模拟异常
-        int m = 10/0;
+        // int m = 10/0;
         int j = userDao.reduceMoney(money, userId2);
 
         // 3.没有产生异常-事务提交
